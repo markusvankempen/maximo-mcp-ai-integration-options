@@ -67,6 +67,21 @@ MAXIMO_OPENAPI_PATH=./maximo_openapi.json
 PORT=3002
 ```
 
+### Download the OpenAPI Schema (Recommended)
+
+The OpenAPI schema file enables offline schema lookups for faster AI responses:
+
+```bash
+# Download from your Maximo instance
+curl -X GET "https://your-maximo-host.com/maximo/oslc/oas/api" \
+     -H "apikey:your-api-key-here" \
+     -o maximo_openapi.json
+```
+
+Alternatively, download via Swagger UI at: `https://your-host/maximo/oslc/oas/api.html`
+
+> **Note**: This file is ~12MB and contains all Object Structure definitions for your Maximo instance.
+
 ### IDE Configuration
 
 Copy and configure the MCP settings for your IDE:

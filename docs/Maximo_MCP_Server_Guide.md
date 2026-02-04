@@ -66,6 +66,77 @@ The `maximo-mcp-server.js` requires the following packages (defined in `package.
 
 ## 3. Configuring the MCP Server in Your IDE
 
+### 2.3 The OpenAPI Schema File (`maximo_openapi.json`)
+
+The **OpenAPI schema file** is a critical component that enables the MCP server to understand your Maximo environment's data structures without making live API calls for every request.
+
+#### What is it?
+
+The `maximo_openapi.json` file is an **OpenAPI 3.0 specification** that describes all available Object Structures, their fields, data types, and relationships in your Maximo instance. This file:
+
+- Contains **definitions for 1000+ Object Structures** (MXWO, MXASSET, MXSR, etc.)
+- Includes **field-level details**: names, types, max lengths, descriptions
+- Enables **offline schema lookups** for faster AI responses
+- Is specific to **your Maximo configuration** (including custom fields)
+
+#### Why is it important?
+
+| Without OpenAPI File | With OpenAPI File |
+|---------------------|-------------------|
+| AI makes live API calls for every schema lookup | Schema lookups are instant (local file read) |
+| Slower response times | Sub-second schema queries |
+| Requires network connectivity for schema info | Works offline for schema introspection |
+| Higher load on Maximo server | Zero server load for schema queries |
+
+#### How to Obtain the OpenAPI Schema
+
+You can download the OpenAPI specification directly from your Maximo instance:
+
+**Method 1: Via Browser (Swagger UI)**
+
+1. Navigate to your Maximo Swagger UI:
+   ```
+   https://[YOUR_MAXIMO_HOST]/maximo/oslc/oas/api.html
+   ```
+
+2. Click the **Download** or **Export** button (usually shows OpenAPI JSON)
+
+3. Save the file as `maximo_openapi.json` in your project directory
+
+**Method 2: Via cURL Command**
+
+```bash
+curl -X GET "https://[YOUR_MAXIMO_HOST]/maximo/oslc/oas/api" \
+     -H "apikey:[YOUR_API_KEY]" \
+     -H "Accept: application/json" \
+     -o maximo_openapi.json
+```
+
+**Method 3: Via Authenticated URL**
+
+Open this URL in your browser while authenticated to Maximo:
+```
+https://[YOUR_MAXIMO_HOST]/maximo/oslc/oas/api
+```
+
+Right-click and "Save As" → `maximo_openapi.json`
+
+#### File Size Note
+
+The OpenAPI file is typically **10-15 MB** due to the comprehensive schema definitions. This is normal and expected. The file is read once when the MCP server starts and cached in memory.
+
+#### Keeping the Schema Updated
+
+If you add custom fields or Object Structures to Maximo, re-download the OpenAPI file to ensure the AI has access to the latest schema information.
+
+```bash
+# Example: Update schema weekly via cron
+0 0 * * 0 curl -X GET "https://your-host/maximo/oslc/oas/api" \
+    -H "apikey:$MAXIMO_API_KEY" -o /path/to/maximo_openapi.json
+```
+
+---
+
 ### 3.1 Configuration for Antigravity (Google)
 
 Antigravity uses a settings file located in your project's `.gemini` directory.
