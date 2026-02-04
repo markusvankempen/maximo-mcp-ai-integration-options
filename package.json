@@ -1,14 +1,43 @@
 {
-  "name": "maximo-work-order-app",
+  "name": "maximo-mcp-server",
   "version": "1.0.0",
-  "description": "Simple Maximo Work Order Viewer",
-  "main": "server.js",
+  "description": "Model Context Protocol (MCP) server for IBM Maximo",
+  "main": "maximo-mcp-server.js",
+  "bin": {
+    "maximo-mcp-server": "./maximo-mcp-server.js"
+  },
+  "files": [
+    "maximo-mcp-server.js",
+    "server.js",
+    ".env.example",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "start": "node server.js",
+    "mcp": "node maximo-mcp-server.js",
     "test": "jest",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markusvankempen/maximo-mcp-ai-integration-options.git"
+  },
+  "keywords": [
+    "mcp",
+    "maximo",
+    "ibm",
+    "ai",
+    "agent",
+    "llm"
+  ],
+  "author": "Markus van Kempen",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options/issues"
+  },
+  "homepage": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.3",
     "dotenv": "^17.2.3",
