@@ -1,1 +1,0 @@
-The `full-page` component is box container that guarantees it is always sized to the viewport of the device.  This may seem trivial, but, getting a div to fill ONLY the viewport without side effects of scrollbars, can be challenging.
