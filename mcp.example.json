@@ -1,0 +1,17 @@
+{
+    "mcpServers": {
+        "maximo": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "maximo-mcp-server"
+            ],
+            "env": {
+                "MAXIMO_URL": "https://your-maximo-host.com/maximo/api",
+                "MAXIMO_API_KEY": "your-api-key-here",
+                "MAXIMO_HOST": "https://your-maximo-host.com",
+                "MAXIMO_OPENAPI_PATH": "/optional/local/path/to/maximo_openapi.json"
+            }
+        }
+    }
+}
