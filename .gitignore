@@ -36,10 +36,9 @@ temp/
 .gemini/
 
 # Files that may contain credentials (legacy/scratch files)
-api-call-example.txt
-getswagger.txt
 graphite-mcp-server-main/
 *.txt
+
 
 # Internal Documentation & Secrets
 Internal/
