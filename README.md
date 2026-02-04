@@ -31,6 +31,29 @@ The **Maximo MCP Server** is a [Model Context Protocol](https://modelcontextprot
 
 ---
 
+## 📚 Documentation
+
+### Core Guides
+
+| Document | Description |
+|----------|-------------|
+| 📖 [**Maximo MCP Server Guide**](docs/Maximo_MCP_Server_Guide.md) | Complete setup, configuration, and tool reference |
+| 🔌 [**Maximo API Interaction Guide**](docs/Maximo_API_Interaction_Guide.md) | OSLC query syntax, code generation patterns, troubleshooting |
+| 🎬 [**Asset Manager Case Study**](docs/Asset_Manager_App_Case_Study.md) | Step-by-step walkthrough of building a complete app |
+
+### French Translations
+
+| Document | Description |
+|----------|-------------|
+| 📖 [Guide du Serveur MCP Maximo](docs/Maximo_MCP_Server_Guide_FR.md) | Version française du guide complet |
+| 🔌 [Guide d'Interaction API Maximo](docs/Maximo_API_Interaction_Guide_FR.md) | Version française du guide API |
+
+### Word Documents
+
+All guides are also available in `.docx` format in the `docs/` folder for offline reading and sharing.
+
+---
+
 ## ⚡ Quick Start
 
 ### Prerequisites
@@ -119,29 +142,6 @@ In your AI IDE, ask:
 > "Is the Maximo MCP server connected?"
 
 The AI will call `get_instance_details` and confirm connectivity.
-
----
-
-## 📚 Documentation
-
-### Core Guides
-
-| Document | Description |
-|----------|-------------|
-| 📖 [**Maximo MCP Server Guide**](docs/Maximo_MCP_Server_Guide.md) | Complete setup, configuration, and tool reference |
-| 🔌 [**Maximo API Interaction Guide**](docs/Maximo_API_Interaction_Guide.md) | OSLC query syntax, code generation patterns, troubleshooting |
-| 🎬 [**Asset Manager Case Study**](docs/Asset_Manager_App_Case_Study.md) | Step-by-step walkthrough of building a complete app |
-
-### French Translations
-
-| Document | Description |
-|----------|-------------|
-| 📖 [Guide du Serveur MCP Maximo](docs/Maximo_MCP_Server_Guide_FR.md) | Version française du guide complet |
-| 🔌 [Guide d'Interaction API Maximo](docs/Maximo_API_Interaction_Guide_FR.md) | Version française du guide API |
-
-### Word Documents
-
-All guides are also available in `.docx` format for offline reading and sharing.
 
 ---
 
