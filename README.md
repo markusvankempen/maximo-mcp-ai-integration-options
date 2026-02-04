@@ -8,6 +8,7 @@
 [![MCP](https://img.shields.io/badge/MCP-Protocol-5A29E4?style=for-the-badge)](https://modelcontextprotocol.io/)
 [![Maximo](https://img.shields.io/badge/IBM-Maximo-052FAD?style=for-the-badge&logo=ibm&logoColor=white)](https://www.ibm.com/products/maximo)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-v1.0.0-blue?style=for-the-badge)](package.json)
 
 *Transform your Maximo development workflow with AI-driven schema discovery, live data querying, and intelligent code generation.*
 
