@@ -1,0 +1,43 @@
+{
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "name": "io.github.markusvankempen/maximo-mcp-server",
+    "description": "Connect AI assistants directly to IBM Maximo. Enables autonomous discovery of Object Structures (APIs), live schema inspection, and real-time OSLC data querying.",
+    "repository": {
+        "url": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options",
+        "source": "github"
+    },
+    "version": "1.0.1",
+    "packages": [
+        {
+            "registryType": "npm",
+            "identifier": "maximo-mcp-server",
+            "version": "1.0.1",
+            "transport": {
+                "type": "stdio"
+            },
+            "environmentVariables": [
+                {
+                    "name": "MAXIMO_URL",
+                    "description": "Base URL for the Maximo REST API (e.g., https://your-host/maximo/api)",
+                    "isRequired": true,
+                    "format": "uri",
+                    "isSecret": false
+                },
+                {
+                    "name": "MAXIMO_API_KEY",
+                    "description": "API Key for Maximo authentication",
+                    "isRequired": true,
+                    "format": "string",
+                    "isSecret": true
+                },
+                {
+                    "name": "MAXIMO_HOST",
+                    "description": "Base Host URL for the Maximo instance",
+                    "isRequired": false,
+                    "format": "uri",
+                    "isSecret": false
+                }
+            ]
+        }
+    ]
+}
