@@ -39,3 +39,4 @@ temp/
 api-call-example.txt
 getswagger.txt
 graphite-mcp-server-main/
+*.txt
