@@ -1,0 +1,15 @@
+startCommand:
+  type: stdio
+  command: node
+  args:
+    - maximo-mcp-server.js
+  env:
+    MAXIMO_URL:
+      description: Base URL for the Maximo REST API (e.g., https://your-host/maximo/api)
+      required: true
+    MAXIMO_API_KEY:
+      description: API Key for Maximo authentication
+      required: true
+    MAXIMO_HOST:
+      description: Base Host URL for the Maximo instance (e.g., https://your-host)
+      required: false
