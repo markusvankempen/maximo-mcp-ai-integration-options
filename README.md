@@ -333,12 +333,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [IBM Maximo](https://www.ibm.com/products/maximo) for the enterprise asset management platform
 - [Carbon Design System](https://carbondesignsystem.com/) for the UI components
 
----
 
-<div align="center">
-
-**Built with ❤️ using AI-Assisted Development**
-
-*Transforming enterprise development, one prompt at a time.*
-
-</div>
