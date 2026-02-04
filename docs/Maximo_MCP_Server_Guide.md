@@ -156,14 +156,12 @@ Edit `.gemini/settings.json` and add:
 {
   "mcpServers": {
     "maximo": {
-      "command": "node",
-      "args": [
-        "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js"
-      ],
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
       "env": {
         "MAXIMO_URL": "https://[YOUR_MAXIMO_HOST]/maximo/api",
         "MAXIMO_API_KEY": "[YOUR_API_KEY]",
-        "MAXIMO_OPENAPI_PATH": "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json"
+        "MAXIMO_OPENAPI_PATH": "/absolute/path/to/maximo_openapi.json"
       }
     }
   }
@@ -199,14 +197,12 @@ nano ~/.cursor/mcp.json
 {
   "mcpServers": {
     "maximo": {
-      "command": "node",
-      "args": [
-        "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js"
-      ],
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
       "env": {
         "MAXIMO_URL": "https://[YOUR_MAXIMO_HOST]/maximo/api",
         "MAXIMO_API_KEY": "[YOUR_API_KEY]",
-        "MAXIMO_OPENAPI_PATH": "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json"
+        "MAXIMO_OPENAPI_PATH": "/absolute/path/to/maximo_openapi.json"
       }
     }
   }
@@ -236,12 +232,12 @@ In the Continue configuration file (`~/.continue/config.json`), add:
   "mcpServers": [
     {
       "name": "maximo",
-      "command": "node",
-      "args": ["/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js"],
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
       "env": {
         "MAXIMO_URL": "https://[YOUR_MAXIMO_HOST]/maximo/api",
         "MAXIMO_API_KEY": "[YOUR_API_KEY]",
-        "MAXIMO_OPENAPI_PATH": "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json"
+        "MAXIMO_OPENAPI_PATH": "/absolute/path/to/maximo_openapi.json"
       }
     }
   ]
