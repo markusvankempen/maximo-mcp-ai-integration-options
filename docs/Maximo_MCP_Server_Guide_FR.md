@@ -1,6 +1,7 @@
 # Guide Complet Maximo MCP : Développement Piloté par IA
 
 **Auteur :** Markus van Kempen  
+**Courriel :** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
 **Date :** 3 février 2026
 
 ---

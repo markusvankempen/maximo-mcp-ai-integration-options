@@ -1,6 +1,7 @@
 # Case Study: Building a Maximo Asset Manager with AI and MCP
 
 **Author:** Markus van Kempen  
+**Email:** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
 **Date:** 3 February 2026  
 **Application:** Maximo Asset Manager  
 **Technology:** Maximo MCP Server + AI-Assisted Development

@@ -1,6 +1,7 @@
 # Maximo API Interaction & AI Workflow Guide
 
 **Author:** Markus van Kempen  
+**Email:** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
 **Date:** 3 Feb 2026
 
 ---

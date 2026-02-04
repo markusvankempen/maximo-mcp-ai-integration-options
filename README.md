@@ -12,6 +12,7 @@
 *Transform your Maximo development workflow with AI-driven schema discovery, live data querying, and intelligent code generation.*
 
 **Author:** Markus van Kempen  
+**Email:** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
 **Date:** 3 February 2026
 
 [Getting Started](#-quick-start) • [Documentation](#-documentation) • [Live Demo](#-live-demo) • [Use Cases](#-use-cases)
