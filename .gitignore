@@ -40,3 +40,10 @@ api-call-example.txt
 getswagger.txt
 graphite-mcp-server-main/
 *.txt
+
+# Internal Documentation & Secrets
+Internal/
+.mcpregistry_github_token
+
+.mcpregistry_registry_token
+*.tgz
