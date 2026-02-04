@@ -286,7 +286,7 @@ Loaded OpenAPI spec. Components: 1247
 Maximo MCP Server running on stdio
 ```
 
-![MCP Configuration](MCPConfig.png)
+![MCP Configuration](../images/MCPConfig.png)
 
 > **Key Benefit**: Once configured, the MCP setup automatically handles **Schema Knowledge** and **API Connectivity**. You do not need to manually feed the AI Swagger files or API documentation; the MCP server proactively retrieves this context for every request.
 
@@ -294,16 +294,18 @@ Maximo MCP Server running on stdio
 
 ## 4. Available MCP Tools
 
-The Maximo MCP Server exposes the following tools to the AI agent:
+The Maximo MCP Server exposes the following tools to the AI agent.
+
+![MCP Tools UI](../images/mcp_tools_ui.png)
 
 | Tool Name | Description | Example Use Case |
 | :--- | :--- | :--- |
-| `list_object_structures` | Searches the available Maximo APIs by name or description. | "What APIs are available for Assets?" |
-| `get_schema_details` | Retrieves detailed field definitions (type, length, title) for a specific Object Structure. | "What fields are on the MXWO object?" |
-| `query_maximo` | Executes a live OSLC REST query against the Maximo instance. | "Get the last 5 approved work orders." |
-| `get_instance_details` | Checks server connectivity and retrieves meta-information like latest work order date. | "Is the Maximo server reachable?" |
-| `render_carbon_table` | Generates an interactive HTML table (Carbon Design System) from query results. | "Show me a table of open work orders." |
-| `render_carbon_details` | Generates a detailed HTML view for a single record. | "Show me the details for work order 1001." |
+| `list_object_structures` | List available Maximo Object Structures (APIs) from the schema, with optional filtering. | "What APIs are available for Assets?" |
+| `get_schema_details` | Get the detailed field definitions (properties, types) for a specific Maximo Object Structure. | "What fields are on the MXWO object?" |
+| `query_maximo` | Query data from Maximo using the OSLC REST API. | "Get the last 5 approved work orders." |
+| `render_carbon_table` | Generates a beautiful Carbon Design System HTML table from Maximo data. | "Show me a table of open work orders." |
+| `render_carbon_details` | Generates a beautiful Carbon Design System detail view for a specific Maximo record. | "Show me the details for work order 1001." |
+| `get_instance_details` | Introspect the Maximo instance to get context data (e.g., latest data dates, version). | "Is the Maximo server reachable?" |
 
 ---
 

@@ -191,18 +191,16 @@ open http://localhost:3002/demos/assets.html
 
 The server exposes 6 tools to the AI:
 
-```
-┌─────────────────────────────┬──────────────────────────────────────────┐
-│ Tool                        │ Description                              │
-├─────────────────────────────┼──────────────────────────────────────────┤
-│ list_object_structures      │ Search available Maximo APIs             │
-│ get_schema_details          │ Get field definitions for an Object      │
-│ query_maximo                │ Execute OSLC REST queries                │
-│ get_instance_details        │ Check server connectivity                │
-│ render_carbon_table         │ Generate Carbon Design HTML tables       │
-│ render_carbon_details       │ Generate detail view for a record        │
-└─────────────────────────────┴──────────────────────────────────────────┘
-```
+![MCP Tools UI](images/mcp_tools_ui.png)
+
+| Tool Name | Description |
+| :--- | :--- |
+| `list_object_structures` | List available Maximo Object Structures (APIs) |
+| `get_schema_details` | Get field definitions for an Object Structure |
+| `query_maximo` | Execute OSLC REST queries |
+| `render_carbon_table` | Generate Carbon Design HTML tables |
+| `render_carbon_details` | Generate detail view for a record |
+| `get_instance_details` | Check server connectivity |
 
 ---
 
