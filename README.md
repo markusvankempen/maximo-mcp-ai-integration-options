@@ -69,10 +69,20 @@ All guides are also available in `.docx` format in the `docs/` folder for offlin
 
 ### Installation
 
+### Installation
+
+**Method 1: Run directly with npx (Recommended)**
+
+```bash
+npx maximo-mcp-server
+```
+
+**Method 2: Clone from Source**
+
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/Maximo-MCP-EDF.git
-cd Maximo-MCP-EDF
+git clone https://github.com/markusvankempen/maximo-mcp-ai-integration-options.git
+cd maximo-mcp-ai-integration-options
 
 # Install dependencies
 npm install
