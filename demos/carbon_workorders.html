@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<!-- 
+  Maximo Carbon UI Example
+  Author: Markus van Kempen
+  Date: 3 Feb 2026
+  Description: An example implementation using IBM's Carbon Design System v11 to display Maximo data.
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximo Work Orders - Carbon v11</title>
+    <!-- IBM Plex Font -->
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,400i,500,600&display=swap" rel="stylesheet">
+    <!-- Carbon Design System v11 Styles -->
+    <link rel="stylesheet" href="https://unpkg.com/@carbon/styles@1/css/styles.min.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            /* g10 theme background equivalent */
+            padding-top: 2rem;
+        }
+
+        /* Optional: Add a white background layer for the table container if desired, 
+           or use the native Carbon layer structure */
+        .page-content {
+            background-color: #ffffff;
+            padding: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cds--grid">
+        <div class="cds--row">
+            <div class="cds--col-lg-16 cds--col-md-8 cds--col-sm-4">
+
+                <!-- Data Table Container -->
+                <div class="cds--data-table-container">
+                    <div class="cds--data-table-header">
+                        <h4 class="cds--data-table-header__title">Latest Work Orders</h4>
+                        <p class="cds--data-table-header__description">Interactive preview with sorting and filtering
+                            (Carbon v11).</p>
+                    </div>
+
+                    <!-- Toolbar / Search -->
+                    <section class="cds--table-toolbar">
+                        <div class="cds--toolbar-content">
+                            <!-- Search -->
+                            <div class="cds--search cds--search--sm" role="search">
+                                <label id="search-label-1" class="cds--label" for="table-search">Search</label>
+                                <input class="cds--search-input" type="text" id="table-search" placeholder="Filter...">
+                                <svg class="cds--search-magnifier" width="16" height="16" viewBox="0 0 16 16">
+                                    <path
+                                        d="M15,14.3L10.7,10c1.9-2.3,1.6-5.8-0.7-7.7S4.2,0.7,2.3,3S0.7,8.8,3,10.7c2,1.7,5,1.7,7,0l4.3,4.3L15,14.3z M2,6.5	C2,4,4,2,6.5,2S11,4,11,6.5S9,11,6.5,11S2,9,2,6.5z">
+                                    </path>
+                                </svg>
+                                <button class="cds--search-close cds--search-close--hidden" title="Clear search input"
+                                    aria-label="Clear search input">
+                                    <svg width="16" height="16" viewBox="0 0 16 16">
+                                        <path
+                                            d="M12 4.7l-.7-.7L8 7.3 4.7 4l-.7.7L7.3 8 4 11.3l.7.7L8 8.7l3.3 3.3.7-.7L8.7 8z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Table -->
+                    <table class="cds--data-table cds--data-table--zebra cds--data-table--lg" id="main-table">
+                        <thead>
+                            <tr>
+                                <th class="cds--table-column-menu">
+                                    <!-- Sortable Column Header -->
+                                    <button type="button" class="cds--table-sort" onclick="sortTable(0)">
+                                        <span class="cds--table-sort__flex">
+                                            <span class="cds--table-header-label">WONUM</span>
+                                            <svg class="cds--table-sort__icon" width="16" height="16"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z">
+                                                </path>
+                                            </svg>
+                                            <svg class="cds--table-sort__icon-unsorted" width="16" height="16"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M13.8 10.3L12 12.1 12 2 11 2 11 12.1 9.2 10.3 8.5 11 11.5 14 14.5 11zM4.5 2L1.5 5 2.2 5.7 4 3.9 4 14 5 14 5 3.9 6.8 5.7 7.5 5z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </th>
+                                <th>
+                                    <button type="button" class="cds--table-sort" onclick="sortTable(1)">
+                                        <span class="cds--table-sort__flex">
+                                            <span class="cds--table-header-label">DESCRIPTION</span>
+                                            <svg class="cds--table-sort__icon" width="16" height="16"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z">
+                                                </path>
+                                            </svg>
+                                            <svg class="cds--table-sort__icon-unsorted" width="16" height="16"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M13.8 10.3L12 12.1 12 2 11 2 11 12.1 9.2 10.3 8.5 11 11.5 14 14.5 11zM4.5 2L1.5 5 2.2 5.7 4 3.9 4 14 5 14 5 3.9 6.8 5.7 7.5 5z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </th>
+                                <th>
+                                    <button type="button" class="cds--table-sort" onclick="sortTable(2)">
+                                        <span class="cds--table-sort__flex">
+                                            <span class="cds--table-header-label">STATUS</span>
+                                            <svg class="cds--table-sort__icon" width="16" height="16"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z">
+                                                </path>
+                                            </svg>
+                                            <svg class="cds--table-sort__icon-unsorted" width="16" height="16"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M13.8 10.3L12 12.1 12 2 11 2 11 12.1 9.2 10.3 8.5 11 11.5 14 14.5 11zM4.5 2L1.5 5 2.2 5.7 4 3.9 4 14 5 14 5 3.9 6.8 5.7 7.5 5z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </th>
+                                <th>
+                                    <button type="button" class="cds--table-sort" onclick="sortTable(3)">
+                                        <span class="cds--table-sort__flex">
+                                            <span class="cds--table-header-label">SITEID</span>
+                                            <svg class="cds--table-sort__icon" width="16" height="16"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z">
+                                                </path>
+                                            </svg>
+                                            <svg class="cds--table-sort__icon-unsorted" width="16" height="16"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M13.8 10.3L12 12.1 12 2 11 2 11 12.1 9.2 10.3 8.5 11 11.5 14 14.5 11zM4.5 2L1.5 5 2.2 5.7 4 3.9 4 14 5 14 5 3.9 6.8 5.7 7.5 5z">
+                                                </path>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <tr>
+                                <td>1022</td>
+                                <td>Electric Cart Tune-Up</td>
+                                <td><span class="cds--tag cds--tag--blue">WSCH</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>1001-70</td>
+                                <td>Operate conveyor to ensure unit runs quietly.</td>
+                                <td><span class="cds--tag cds--tag--green">INPRG</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>1001-80</td>
+                                <td>Change oil in gear reducer. Examine drained oil.</td>
+                                <td><span class="cds--tag cds--tag--green">INPRG</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>1007-30</td>
+                                <td>CLEAN MOTOR</td>
+                                <td><span class="cds--tag cds--tag--magenta">APPR</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>1006-70</td>
+                                <td>Record amperage and voltage with motor operating.</td>
+                                <td><span class="cds--tag cds--tag--magenta">APPR</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>6015-80</td>
+                                <td>Repack wheel bearings. Grease steering chassis.</td>
+                                <td><span class="cds--tag cds--tag--orange">WAPPR</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>1004-120</td>
+                                <td>Remove and clean air induction filters.</td>
+                                <td><span class="cds--tag cds--tag--green">INPRG</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>6015-70</td>
+                                <td>Lubricate chain and check sprockets.</td>
+                                <td><span class="cds--tag cds--tag--orange">WAPPR</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>1022-80</td>
+                                <td>Repack wheel bearings. Grease steering chassis.</td>
+                                <td><span class="cds--tag cds--tag--blue">WSCH</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                            <tr>
+                                <td>1026</td>
+                                <td>HVAC Quarterly Inspections & Certification</td>
+                                <td><span class="cds--tag cds--tag--blue">WSCH</span></td>
+                                <td>BEDFORD</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Filter logic
+        document.getElementById('table-search').addEventListener('input', function (e) {
+            const term = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#table-body tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+
+            // Toggle close button
+            const closeBtn = document.querySelector('.cds--search-close');
+            if (term.length > 0) {
+                closeBtn.classList.remove('cds--search-close--hidden');
+            } else {
+                closeBtn.classList.add('cds--search-close--hidden');
+            }
+        });
+
+        // Clear search logic
+        document.querySelector('.cds--search-close').addEventListener('click', function () {
+            const input = document.getElementById('table-search');
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+        });
+
+        // Sorting logic
+        let sortDir = 1;
+        let currentSortCol = -1;
+
+        function sortTable(n) {
+            const tbody = document.getElementById("table-body");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            const headers = document.querySelectorAll('.cds--table-sort');
+
+            // Handle direction and state toggling
+            if (currentSortCol === n) {
+                sortDir *= -1;
+            } else {
+                sortDir = 1;
+                currentSortCol = n;
+            }
+
+            // Update Header Classes
+            headers.forEach((btn, index) => {
+                if (index === n) {
+                    btn.classList.add('cds--table-sort--active');
+                    if (sortDir === 1) {
+                        btn.classList.add('cds--table-sort--ascending');
+                    } else {
+                        btn.classList.remove('cds--table-sort--ascending');
+                    }
+                } else {
+                    btn.classList.remove('cds--table-sort--active');
+                    btn.classList.remove('cds--table-sort--ascending');
+                }
+            });
+
+            const sortedRows = rows.sort((a, b) => {
+                const x = a.getElementsByTagName("td")[n].textContent.toLowerCase();
+                const y = b.getElementsByTagName("td")[n].textContent.toLowerCase();
+                return x.localeCompare(y, undefined, { numeric: true }) * sortDir;
+            });
+
+            while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+            tbody.append(...sortedRows);
+        }
+    </script>
+</body>
+
+</html>

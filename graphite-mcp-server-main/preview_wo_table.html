@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Order Page (Graphite/Carbon)</title>
+    <!-- Carbon Components Styles (v10 - closest modern equivalent to the underlying library) -->
+    <link rel="stylesheet" href="https://unpkg.com/carbon-components/css/carbon-components.min.css">
+    <style>
+        body {
+            padding: 2rem;
+            background-color: #f4f4f4;
+        }
+
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2rem;
+        }
+
+        .bx--data-table-container {
+            width: 100%;
+        }
+
+        /* Simulation of Maximo specific overrides if any */
+        h1 {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body class="bx--body">
+
+    <div class="page-container">
+        <!-- Graphite Page Header -->
+        <h1 class="bx--type-beta">Work Orders</h1>
+
+        <!-- Graphite Section/Row/Col layout -->
+        <div class="bx--grid" style="padding: 0;">
+            <div class="bx--row">
+                <div class="bx--col">
+
+                    <!-- Table Component (Carbon DataTable structure) -->
+                    <div class="bx--data-table-container">
+                        <div class="bx--data-table-header">
+                            <h4 class="bx--data-table-header__title">All Work Orders</h4>
+                            <p class="bx--data-table-header__description">List of active work orders from Maximo</p>
+                        </div>
+
+                        <table class="bx--data-table bx--data-table--zebra">
+                            <thead>
+                                <tr>
+                                    <th class="bx--table-sort" data-event="sort">
+                                        <button class="bx--table-sort__button">
+                                            <span class="bx--table-header-label">WO Number</span>
+                                            <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+                                                xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                class="bx--table-sort__icon" width="16" height="16" viewBox="0 0 16 16"
+                                                aria-hidden="true">
+                                                <path
+                                                    d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </th>
+                                    <th class="bx--table-sort" data-event="sort">
+                                        <button class="bx--table-sort__button">
+                                            <span class="bx--table-header-label">Description</span>
+                                            <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+                                                xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                class="bx--table-sort__icon" width="16" height="16" viewBox="0 0 16 16"
+                                                aria-hidden="true">
+                                                <path
+                                                    d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </th>
+                                    <th class="bx--table-sort" data-event="sort">
+                                        <button class="bx--table-sort__button">
+                                            <span class="bx--table-header-label">Status</span>
+                                            <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+                                                xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                class="bx--table-sort__icon" width="16" height="16" viewBox="0 0 16 16"
+                                                aria-hidden="true">
+                                                <path
+                                                    d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </th>
+                                    <th class="bx--table-sort" data-event="sort" aria-sort="descending">
+                                        <button class="bx--table-sort__button">
+                                            <span class="bx--table-header-label">Report Date</span>
+                                            <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+                                                xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                class="bx--table-sort__icon-active" width="16" height="16"
+                                                viewBox="0 0 16 16" aria-hidden="true">
+                                                <path
+                                                    d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>WO1001</td>
+                                    <td>Pump Maintenance</td>
+                                    <td><span class="bx--tag bx--tag--green">APPR</span></td>
+                                    <td>2026-02-01</td>
+                                </tr>
+                                <tr>
+                                    <td>WO1002</td>
+                                    <td>HVAC Repair</td>
+                                    <td><span class="bx--tag bx--tag--yellow">WAPPR</span></td>
+                                    <td>2026-02-02</td>
+                                </tr>
+                                <tr>
+                                    <td>WO1003</td>
+                                    <td>Office Lighting Check</td>
+                                    <td><span class="bx--tag bx--tag--green">APPR</span></td>
+                                    <td>2026-02-03</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carbon Scripts -->
+    <script src="https://unpkg.com/carbon-components/scripts/carbon-components.min.js"></script>
+</body>
+
+</html>

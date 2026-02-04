@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximo Asset Manager</title>
+    <meta name="description" content="AI-Generated Maximo Asset Management Dashboard">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .status-badge {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .asset-row:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(4px);
+        }
+
+        .gradient-border {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+    <!-- Header -->
+    <header class="glass-card sticky top-0 z-50 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="gradient-border p-[2px] rounded-xl">
+                        <div class="bg-slate-900 rounded-xl p-2">
+                            <i data-lucide="box" class="w-8 h-8 text-blue-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1
+                            class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                            Maximo Asset Manager
+                        </h1>
+                        <p class="text-sm text-slate-400">AI-Powered Asset Dashboard</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div
+                        class="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/30">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 status-badge"></span>
+                        <span class="text-emerald-400 text-sm font-medium">Connected</span>
+                    </div>
+                    <button id="refreshBtn" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors">
+                        <i data-lucide="refresh-cw" class="w-5 h-5 text-slate-400"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass-card rounded-2xl p-6 fade-in" style="animation-delay: 0.1s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-400 text-sm">Total Assets</p>
+                        <p id="totalAssets" class="text-3xl font-bold text-white mt-1">--</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-blue-500/20">
+                        <i data-lucide="boxes" class="w-6 h-6 text-blue-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 fade-in" style="animation-delay: 0.2s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-400 text-sm">Running</p>
+                        <p id="runningAssets" class="text-3xl font-bold text-emerald-400 mt-1">--</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-emerald-500/20">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-emerald-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 fade-in" style="animation-delay: 0.3s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-400 text-sm">Not Ready</p>
+                        <p id="notReadyAssets" class="text-3xl font-bold text-amber-400 mt-1">--</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-amber-500/20">
+                        <i data-lucide="alert-triangle" class="w-6 h-6 text-amber-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 fade-in" style="animation-delay: 0.4s">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-400 text-sm">Sites</p>
+                        <p id="totalSites" class="text-3xl font-bold text-purple-400 mt-1">--</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-purple-500/20">
+                        <i data-lucide="map-pin" class="w-6 h-6 text-purple-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="glass-card rounded-2xl p-6 mb-6 fade-in" style="animation-delay: 0.5s">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 relative">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search assets by number or description..."
+                        class="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                </div>
+                <select id="siteFilter"
+                    class="px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500 transition-all">
+                    <option value="">All Sites</option>
+                </select>
+                <select id="statusFilter"
+                    class="px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500 transition-all">
+                    <option value="">All Statuses</option>
+                    <option value="OPERATING">Operating</option>
+                    <option value="NOT READY">Not Ready</option>
+                    <option value="BROKEN">Broken</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Assets Table -->
+        <div class="glass-card rounded-2xl overflow-hidden fade-in" style="animation-delay: 0.6s">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-slate-800/50">
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-slate-300">Asset Number</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-slate-300">Description</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-slate-300">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-slate-300">Location</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-slate-300">Site</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-slate-300">Running</th>
+                            <th class="px-6 py-4 text-center text-sm font-semibold text-slate-300">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assetsTableBody">
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center text-slate-500">
+                                <div class="flex flex-col items-center gap-3">
+                                    <i data-lucide="loader-2" class="w-8 h-8 animate-spin"></i>
+                                    <span>Loading assets...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Detail Panel (Hidden by default) -->
+        <div id="detailPanel"
+            class="fixed inset-y-0 right-0 w-full md:w-[500px] glass-card transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-white">Asset Details</h2>
+                    <button id="closeDetail" class="p-2 rounded-lg hover:bg-slate-700 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5 text-slate-400"></i>
+                    </button>
+                </div>
+                <div id="detailContent"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-6 py-6">
+            <div class="flex items-center justify-between text-sm text-slate-500">
+                <span>Generated via Maximo MCP Server</span>
+                <span>Powered by AI-Assisted Development</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Pre-loaded data from Maximo MCP Server (fallback when API unavailable)
+        const PRELOADED_ASSETS = [
+            { assetnum: "A6002", description: "Highway Tractor, Class 8 Truck, Cummins M11, Spic", status: "NOT READY", location: "DALTERM", siteid: "FLEET", isrunning: true },
+            { assetnum: "L12510", description: "STAMPING MACH", status: "NOT READY", location: "SHIPPING", siteid: "LAREDO", isrunning: true },
+            { assetnum: "1001", description: "Centrifugal Pump- 100GPM/50PSI", status: "OPERATING", location: "BR300", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "1002", description: "Overhead Crane- Loss #1-5ton", status: "OPERATING", location: "LOADING", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "11200", description: "Substation- Loss #1 Primary Feed", status: "OPERATING", location: "MF100", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "11210", description: "Cable- 1000 MCM- Loss #1 Primary Feed", status: "OPERATING", location: "MF100C", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "11220", description: "Breaker- 400A/ 4160v/ 3 Phase", status: "OPERATING", location: "MF100C", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "11300", description: "Transformer- 3750kva/4160v-480v/60hz", status: "OPERATING", location: "MF100", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "11310", description: "Transformer- 750kva/4160v-480v/60hz", status: "OPERATING", location: "MF110", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "11400", description: "Motor Control Center- 480v/3ph/60hz", status: "OPERATING", location: "BPM3200", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "11430", description: "Switchgear- 480V Main", status: "NOT READY", location: "BPM3100", siteid: "BEDFORD", isrunning: false },
+            { assetnum: "11450", description: "Panel- Distribution 480V/225A", status: "OPERATING", location: "BR450", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "11460", description: "Panel- Lighting 277V/100A", status: "OPERATING", location: "OFF100", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "12100", description: "Air Compressor- 100HP/150PSI", status: "OPERATING", location: "MAINT", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "12200", description: "Air Dryer- Refrigerated 500CFM", status: "OPERATING", location: "MAINT", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "12300", description: "Air Receiver Tank- 500 Gallon", status: "OPERATING", location: "MAINT", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "13100", description: "Packaging Machine #1 - Filler/Sealer", status: "OPERATING", location: "BPM3100", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "13110", description: "Conveyor- Infeed to Filler #1", status: "OPERATING", location: "BPM3100", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "13120", description: "Bottom Sealing System", status: "NOT READY", location: "BPM3100", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "13200", description: "Packaging Machine #2 - Wrapper", status: "OPERATING", location: "BPM3200", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "13400", description: "Case Packer- Automatic", status: "OPERATING", location: "SHIPPING", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "13500", description: "Palletizer- Robotic", status: "OPERATING", location: "SHIPPING", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "20100", description: "Fire Pump- 1500GPM/150PSI", status: "OPERATING", location: "UTILITY", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "20200", description: "Chiller- 500 Ton Centrifugal", status: "OPERATING", location: "UTILITY", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "20300", description: "Cooling Tower- 600 Ton", status: "OPERATING", location: "UTILITY", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "20400", description: "Boiler- 200HP Steam", status: "NOT READY", location: "UTILITY", siteid: "BEDFORD", isrunning: false },
+            { assetnum: "23972", description: "Motor- 10hp/1750rpm/TEFC/254T Frame/440v/3ph/60hz", status: "OPERATING", location: "BR431", siteid: "BEDFORD", isrunning: true },
+            { assetnum: "A6001", description: "Highway Tractor, Class 8 Truck, Peterbilt 379", status: "OPERATING", location: "DALTERM", siteid: "FLEET", isrunning: true },
+            { assetnum: "A6003", description: "Highway Tractor, Class 8 Truck, Kenworth T800", status: "OPERATING", location: "HOUSTERM", siteid: "FLEET", isrunning: true },
+            { assetnum: "A6010", description: "Flatbed Trailer, 48ft, Tandem Axle", status: "OPERATING", location: "DALTERM", siteid: "FLEET", isrunning: true },
+            { assetnum: "A6020", description: "Dry Van Trailer, 53ft, Air Ride", status: "OPERATING", location: "HOUSTERM", siteid: "FLEET", isrunning: true },
+            { assetnum: "A6030", description: "Refrigerated Trailer, 53ft, Thermo King", status: "NOT READY", location: "DALTERM", siteid: "FLEET", isrunning: false },
+            { assetnum: "ENSP001", description: "SPF343 DECK ENGINE", status: "NOT READY", location: "OILFLD", siteid: "FLEET", isrunning: true },
+            { assetnum: "L11100", description: "CNC Lathe- 4 Axis", status: "OPERATING", location: "L200", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L11200", description: "MASTERCAM LATHE", status: "NOT READY", location: "L200", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L12100", description: "Press Brake- 200 Ton", status: "OPERATING", location: "FABRICATION", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L12200", description: "Shear- 10ft x 1/2in", status: "OPERATING", location: "FABRICATION", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L12300", description: "Punch Press- 100 Ton CNC", status: "OPERATING", location: "FABRICATION", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L12400", description: "Laser Cutter- 4000W CO2", status: "OPERATING", location: "FABRICATION", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L12500", description: "Plasma Cutter- 6x12 Table", status: "OPERATING", location: "FABRICATION", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L13100", description: "Welding Robot- 6 Axis", status: "OPERATING", location: "WELDING", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L13200", description: "Spot Welder- Resistance", status: "OPERATING", location: "WELDING", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L14100", description: "Paint Booth- Downdraft", status: "OPERATING", location: "PAINT", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L14200", description: "Powder Coating System", status: "NOT READY", location: "PAINT", siteid: "LAREDO", isrunning: false },
+            { assetnum: "L15100", description: "Assembly Line Conveyor #1", status: "OPERATING", location: "ASSEMBLY", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L15200", description: "Assembly Line Conveyor #2", status: "OPERATING", location: "ASSEMBLY", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L16100", description: "Quality Inspection Station", status: "OPERATING", location: "QC", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L16200", description: "CMM- Coordinate Measuring Machine", status: "OPERATING", location: "QC", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L17100", description: "Forklift- 5000lb Electric", status: "OPERATING", location: "WAREHOUSE", siteid: "LAREDO", isrunning: true },
+            { assetnum: "L17200", description: "Forklift- 10000lb Propane", status: "OPERATING", location: "SHIPPING", siteid: "LAREDO", isrunning: true }
+        ];
+
+        const PRELOADED_SITES = ["BEDFORD", "FLEET", "LAREDO"];
+
+        // API Configuration
+        const API_BASE = '/maximo/api/os/mxasset';
+        let allAssets = [];
+
+        // Fetch assets from Maximo API with fallback to preloaded data
+        async function fetchAssets() {
+            try {
+                const response = await fetch(`${API_BASE}?oslc.select=assetnum,description,status,assettype,location,siteid,isrunning&oslc.pageSize=50&lean=1`);
+                if (!response.ok) throw new Error('API returned ' + response.status);
+                const data = await response.json();
+                allAssets = data.member || [];
+                console.log('Loaded', allAssets.length, 'assets from API');
+            } catch (error) {
+                console.log('Using preloaded data:', error.message);
+                allAssets = PRELOADED_ASSETS;
+            }
+            updateStats();
+            populateFilters();
+            renderAssets(allAssets);
+        }
+
+        // Update statistics cards
+        function updateStats() {
+            document.getElementById('totalAssets').textContent = allAssets.length;
+            document.getElementById('runningAssets').textContent = allAssets.filter(a => a.isrunning).length;
+            document.getElementById('notReadyAssets').textContent = allAssets.filter(a => a.status === 'NOT READY').length;
+
+            const sites = [...new Set(allAssets.map(a => a.siteid))];
+            document.getElementById('totalSites').textContent = sites.length;
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            const sites = [...new Set(allAssets.map(a => a.siteid))].sort();
+            const siteFilter = document.getElementById('siteFilter');
+            sites.forEach(site => {
+                const option = document.createElement('option');
+                option.value = site;
+                option.textContent = site;
+                siteFilter.appendChild(option);
+            });
+        }
+
+        // Render assets to table
+        function renderAssets(assets) {
+            const tbody = document.getElementById('assetsTableBody');
+
+            if (assets.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-slate-500">
+                            No assets found matching your criteria.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = assets.map((asset, index) => `
+                <tr class="asset-row border-b border-slate-800/50 transition-all duration-200 cursor-pointer" data-asset='${JSON.stringify(asset)}' style="animation-delay: ${index * 0.05}s">
+                    <td class="px-6 py-4">
+                        <span class="font-mono font-semibold text-blue-400">${asset.assetnum || 'N/A'}</span>
+                    </td>
+                    <td class="px-6 py-4 text-slate-300 max-w-xs truncate">${asset.description || 'No description'}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(asset.status)}">
+                            ${asset.status || 'Unknown'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-slate-400">${asset.location || '-'}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded bg-slate-800 text-slate-300 text-xs">${asset.siteid || '-'}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        ${asset.isrunning
+                    ? '<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400"></span><span class="text-emerald-400">Yes</span></span>'
+                    : '<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-500"></span><span class="text-slate-500">No</span></span>'
+                }
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <button class="p-2 rounded-lg hover:bg-slate-700 transition-colors view-detail">
+                            <i data-lucide="eye" class="w-4 h-4 text-slate-400"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+            attachRowListeners();
+        }
+
+        // Get status badge color
+        function getStatusColor(status) {
+            const colors = {
+                'OPERATING': 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
+                'NOT READY': 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
+                'BROKEN': 'bg-red-500/20 text-red-400 border border-red-500/30',
+                'DECOMMISSIONED': 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+            };
+            return colors[status] || 'bg-slate-500/20 text-slate-400 border border-slate-500/30';
+        }
+
+        // Attach click listeners to rows
+        function attachRowListeners() {
+            document.querySelectorAll('.asset-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const asset = JSON.parse(row.dataset.asset);
+                    showDetail(asset);
+                });
+            });
+        }
+
+        // Show detail panel
+        function showDetail(asset) {
+            const panel = document.getElementById('detailPanel');
+            const content = document.getElementById('detailContent');
+
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <div class="gradient-border p-[1px] rounded-xl">
+                        <div class="bg-slate-900 rounded-xl p-4">
+                            <div class="flex items-center gap-4">
+                                <div class="p-3 rounded-lg bg-blue-500/20">
+                                    <i data-lucide="box" class="w-8 h-8 text-blue-400"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">${asset.assetnum}</h3>
+                                    <p class="text-slate-400">${asset.description || 'No description'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid gap-4">
+                        <div class="bg-slate-800/50 rounded-xl p-4">
+                            <p class="text-sm text-slate-400 mb-1">Status</p>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(asset.status)}">
+                                ${asset.status || 'Unknown'}
+                            </span>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 rounded-xl p-4">
+                            <p class="text-sm text-slate-400 mb-1">Location</p>
+                            <p class="text-white font-medium">${asset.location || 'Not specified'}</p>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 rounded-xl p-4">
+                            <p class="text-sm text-slate-400 mb-1">Site</p>
+                            <p class="text-white font-medium">${asset.siteid || 'Not specified'}</p>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 rounded-xl p-4">
+                            <p class="text-sm text-slate-400 mb-1">Running Status</p>
+                            <div class="flex items-center gap-2">
+                                ${asset.isrunning
+                    ? '<span class="w-3 h-3 rounded-full bg-emerald-400"></span><span class="text-emerald-400 font-medium">Asset is Running</span>'
+                    : '<span class="w-3 h-3 rounded-full bg-slate-500"></span><span class="text-slate-400 font-medium">Asset is Not Running</span>'
+                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            lucide.createIcons();
+            panel.classList.remove('translate-x-full');
+        }
+
+        // Close detail panel
+        document.getElementById('closeDetail').addEventListener('click', () => {
+            document.getElementById('detailPanel').classList.add('translate-x-full');
+        });
+
+        // Search and filter functionality
+        function filterAssets() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const site = document.getElementById('siteFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            let filtered = allAssets;
+
+            if (search) {
+                filtered = filtered.filter(a =>
+                    (a.assetnum && a.assetnum.toLowerCase().includes(search)) ||
+                    (a.description && a.description.toLowerCase().includes(search))
+                );
+            }
+
+            if (site) {
+                filtered = filtered.filter(a => a.siteid === site);
+            }
+
+            if (status) {
+                filtered = filtered.filter(a => a.status === status);
+            }
+
+            renderAssets(filtered);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterAssets);
+        document.getElementById('siteFilter').addEventListener('change', filterAssets);
+        document.getElementById('statusFilter').addEventListener('change', filterAssets);
+
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            document.getElementById('assetsTableBody').innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-slate-500">
+                        <div class="flex flex-col items-center gap-3">
+                            <i data-lucide="loader-2" class="w-8 h-8 animate-spin"></i>
+                            <span>Refreshing assets...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            lucide.createIcons();
+            fetchAssets();
+        });
+
+        // Initial load
+        fetchAssets();
+    </script>
+</body>
+
+</html>

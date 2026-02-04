@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<!-- 
+  Maximo Work Orders App
+  Author: Markus van Kempen
+  Date: 3 Feb 2026
+  Description: A custom UI application to visualize Maximo Work Orders using Tailwind CSS and Vanilla JS.
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximo Work Orders</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Hide scrollbar for cleaner look */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .selected-card {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.15);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-slate-200 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-10 px-4 py-3 shadow-sm">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-600 text-white p-1.5 rounded-lg">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                </div>
+                <h1 class="font-bold text-lg text-slate-100">Maximo <span
+                        class="text-slate-400 font-normal text-sm ml-2">Work Order Manager</span></h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="connection-status"
+                    class="flex items-center gap-2 px-2 py-1 bg-slate-800 rounded text-xs font-mono text-slate-400">
+                    <span class="w-2 h-2 rounded-full bg-slate-600"></span>
+                    Ready
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div
+                class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-slate-400 font-medium">Total Fetched</p>
+                    <p class="text-2xl font-bold text-slate-100" id="total-count">0</p>
+                </div>
+                <div class="bg-blue-900/30 text-blue-400 p-2 rounded-lg">
+                    <i data-lucide="list" class="w-5 h-5"></i>
+                </div>
+            </div>
+            <div
+                class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-slate-400 font-medium">Current Page</p>
+                    <p class="text-2xl font-bold text-slate-100" id="page-num">1</p>
+                </div>
+                <div class="bg-emerald-900/30 text-emerald-400 p-2 rounded-lg">
+                    <i data-lucide="file-digit" class="w-5 h-5"></i>
+                </div>
+            </div>
+            <div
+                class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-slate-400 font-medium">API Source</p>
+                    <p class="text-sm font-semibold text-slate-100 truncate w-32 md:w-48"
+                        title="manage.edf-rba.ssw-demos.com">...ssw-demos.com</p>
+                </div>
+                <div class="bg-violet-900/30 text-violet-400 p-2 rounded-lg">
+                    <i data-lucide="server" class="w-5 h-5"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- List View -->
+            <div class="lg:col-span-1 space-y-4 flex flex-col h-[calc(100vh-250px)]">
+                <div class="flex justify-between items-center flex-shrink-0">
+                    <h2 class="font-semibold text-lg flex items-center gap-2 text-slate-200">
+                        <i data-lucide="table-2" class="w-5 h-5 text-slate-500"></i>
+                        Work Orders
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="toggleSort()"
+                            class="text-xs flex items-center gap-1 bg-slate-900 border border-slate-700 text-slate-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors"
+                            id="sort-btn">
+                            <i data-lucide="arrow-down-up" class="w-3 h-3"></i> Sort: Newest
+                        </button>
+                        <button onclick="fetchWorkOrders()"
+                            class="text-xs flex items-center gap-1 bg-slate-900 border border-slate-700 text-slate-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors">
+                            <i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div id="record-list" class="space-y-3 overflow-y-auto custom-scrollbar flex-1 pr-2">
+                    <!-- Loading State -->
+                    <div class="flex flex-col items-center justify-center h-48 text-slate-400">
+                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin mb-2"></i>
+                        <p class="text-sm">Loading Work Orders...</p>
+                    </div>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="flex justify-between items-center pt-2 flex-shrink-0" id="pagination-controls">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- Details View -->
+            <div class="lg:col-span-2 space-y-4 flex flex-col h-[calc(100vh-250px)]">
+                <div class="flex justify-between items-center flex-shrink-0">
+                    <h2 class="font-semibold text-lg flex items-center gap-2 text-slate-200">
+                        <i data-lucide="info" class="w-5 h-5 text-slate-500"></i>
+                        <span>Details</span>
+                    </h2>
+                    <div id="detail-actions" class="hidden">
+                        <button
+                            class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition-colors shadow-sm">
+                            Edit Work Order
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Details Panel Content -->
+                <div id="details-panel"
+                    class="bg-slate-900 rounded-xl border border-slate-800 shadow-lg flex-1 flex flex-col relative overflow-hidden">
+                    <!-- Empty State -->
+                    <div id="empty-state"
+                        class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-slate-950/50">
+                        <div class="bg-slate-900 p-4 rounded-full shadow-sm mb-4 border border-slate-800">
+                            <i data-lucide="mouse-pointer-click" class="w-8 h-8 text-slate-600"></i>
+                        </div>
+                        <h3 class="text-slate-200 font-medium mb-1">Select a Work Order</h3>
+                        <p class="text-slate-500 text-sm">Click on any work order from the list to view full details.
+                        </p>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="detail-loading"
+                        class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-slate-900/80 z-10 backdrop-blur-sm">
+                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-blue-500 mb-2"></i>
+                        <p class="text-slate-400 text-sm font-medium">Fetching Details...</p>
+                    </div>
+
+                    <!-- Content (Hidden by default) -->
+                    <div id="details-content" class="hidden flex-col h-full overflow-y-auto custom-scrollbar">
+                        <!-- Header -->
+                        <div class="p-6 border-b border-slate-800 bg-slate-900/50 sticky top-0 backdrop-blur-md z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span id="detail-site"
+                                            class="text-xs font-bold text-slate-500 tracking-wider">SITE</span>
+                                        <span class="text-slate-600">/</span>
+                                        <span id="detail-worktype" class="text-xs font-bold text-slate-500">TYPE</span>
+                                    </div>
+                                    <h2 id="detail-wonum" class="text-3xl font-bold text-slate-100">WO-0000</h2>
+                                </div>
+                                <span id="detail-status"
+                                    class="px-3 py-1 rounded-full text-sm font-bold bg-slate-800 text-slate-400">STATUS</span>
+                            </div>
+                            <p id="detail-desc" class="text-lg text-slate-300 font-medium leading-relaxed">Description
+                                goes here</p>
+                        </div>
+
+                        <!-- Info Grid -->
+                        <div class="p-6 space-y-8">
+
+                            <!-- Primary Info -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700/50">
+                                    <h3 class="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                        <i data-lucide="map-pin" class="w-4 h-4 text-blue-500"></i> Location & Asset
+                                    </h3>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <p class="text-xs text-slate-500 uppercase font-semibold mb-1">Location</p>
+                                            <p id="detail-location" class="font-mono text-slate-300 font-medium">--</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-slate-500 uppercase font-semibold mb-1">Asset</p>
+                                            <p id="detail-asset" class="font-mono text-slate-300 font-medium">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700/50">
+                                    <h3 class="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                                        <i data-lucide="calendar" class="w-4 h-4 text-blue-500"></i> Schedule
+                                    </h3>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between">
+                                            <p class="text-xs text-slate-500 uppercase font-semibold">Target Start</p>
+                                            <p id="detail-start" class="text-sm text-slate-300">--</p>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <p class="text-xs text-slate-500 uppercase font-semibold">Target Finish</p>
+                                            <p id="detail-finish" class="text-sm text-slate-300">--</p>
+                                        </div>
+                                        <div class="flex justify-between pt-2 border-t border-slate-700">
+                                            <p class="text-xs text-slate-500 uppercase font-semibold">Report Date</p>
+                                            <p id="detail-reportdate" class="text-sm text-slate-300">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Info -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="space-y-1">
+                                    <span class="text-xs text-slate-500 uppercase font-semibold">Reported By</span>
+                                    <p id="detail-reportedby" class="text-sm font-medium text-slate-300">--</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="text-xs text-slate-500 uppercase font-semibold">Duration</span>
+                                    <p id="detail-duration" class="text-sm font-medium text-slate-300">--</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="text-xs text-slate-500 uppercase font-semibold">Class</span>
+                                    <p id="detail-woclass" class="text-sm font-medium text-slate-300">--</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="text-xs text-slate-500 uppercase font-semibold">Failure Code</span>
+                                    <p id="detail-failurecode" class="text-sm font-medium text-slate-300">--</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // CONFIGURATION
+        // Note: API requests go through local proxy (server.js) which handles authentication
+        const CONFIG = {
+            API_URL: "/maximo/api/os/mxwo",
+            // API_KEY is handled by the proxy server from .env
+            PAGE_SIZE: 10
+        };
+
+        // State
+        let state = {
+            workOrders: [],
+            selectedHref: null,
+            page: 1,
+            nextPageHref: null,
+            sortBy: '-reportdate'
+        };
+
+        // --- API FUNCTIONS ---
+
+        async function fetchWorkOrders(url = null) {
+            const listContainer = document.getElementById('record-list');
+            listContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-48 text-slate-400">
+                    <i data-lucide="loader-2" class="w-8 h-8 animate-spin mb-2"></i>
+                    <p class="text-sm">Refreshing...</p>
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
+
+            try {
+                // Determine URL
+                let fetchUrl = url;
+                if (!fetchUrl) {
+                    const params = new URLSearchParams({
+                        "oslc.pageSize": CONFIG.PAGE_SIZE,
+                        "lean": 1,
+                        "oslc.select": "wonum,description,status,siteid,assetnum,location,targstartdate,targcompdate,worktype,reportdate",
+                        "oslc.orderBy": state.sortBy
+                    });
+                    fetchUrl = `${CONFIG.API_URL}?${params.toString()}`;
+                }
+
+                // Call API
+                const response = await fetch(fetchUrl, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': CONFIG.API_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+
+                // Update State
+                state.workOrders = data.member || [];
+                state.page = data.responseInfo?.pagenum || 1;
+                state.nextPageHref = data.responseInfo?.nextPage?.href || null;
+
+                // Update UI Status
+                updateConnectionStatus('Connected', true);
+
+                // Render
+                renderList();
+                renderStats(data.member.length, state.page);
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                listContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full p-4 text-center text-red-500">
+                        <i data-lucide="alert-circle" class="w-8 h-8 mb-2"></i>
+                        <p class="text-sm font-medium">Failed to load data</p>
+                        <p class="text-xs text-slate-400 mt-1">${error.message}</p>
+                        <p class="text-xs text-amber-600 mt-4 bg-amber-50 p-2 rounded border border-amber-200">
+                            Note: CORS issues may prevent browser access to this API directly. 
+                            Ideally, use a proxy server or disable CORS for testing.
+                        </p>
+                    </div>
+                `;
+                if (window.lucide) lucide.createIcons();
+                updateConnectionStatus('Error', false);
+            }
+        }
+
+        async function fetchDetails(href) {
+            // UI Loading
+            document.getElementById('detail-loading').classList.remove('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
+
+            try {
+                // REWRITE URL FOR PROXY
+                // The API returns absolute URLs like https://poc-ui.../maximo/api...
+                // We need to route this through our local /maximo/api... proxy to avoid CORS.
+                let fetchUrl = href;
+                if (fetchUrl.startsWith('http')) {
+                    // Replace the domain part with an empty string to make it relative (or start with /maximo)
+                    // Assumption: The path after the domain starts with /maximo
+                    const urlObj = new URL(href);
+                    fetchUrl = urlObj.pathname + urlObj.search;
+                }
+
+                // Ensure lean=1 is present
+                if (!fetchUrl.includes('lean=')) {
+                    fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 'lean=1';
+                }
+
+                const response = await fetch(fetchUrl, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': CONFIG.API_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const details = await response.json();
+                renderDetails(details);
+
+            } catch (error) {
+                console.error("Detail Fetch Error:", error);
+                alert("Failed to load details: " + error.message);
+                document.getElementById('detail-loading').classList.add('hidden');
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+
+        function renderList() {
+            const listContainer = document.getElementById('record-list');
+            listContainer.innerHTML = '';
+
+            if (state.workOrders.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center p-4 text-slate-400 text-sm">No records found.</div>
+                `;
+                return;
+            }
+
+            state.workOrders.forEach(wo => {
+                const isSelected = wo.href === state.selectedHref;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border transition-all cursor-pointer group ${isSelected
+                    ? 'selected-card border-blue-500'
+                    : 'bg-slate-900 border-slate-800 shadow-sm hover:shadow-md hover:border-slate-600'
+                    }`;
+                card.onclick = () => selectRecord(wo);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-start gap-3 overflow-hidden">
+                            <div class="${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 group-hover:bg-blue-900/30 group-hover:text-blue-400'} p-2 rounded-lg transition-colors flex-shrink-0">
+                                <i data-lucide="file-text" class="w-5 h-5"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-slate-200 text-sm truncate">${wo.wonum}</h3>
+                                <p class="text-xs text-slate-400 truncate mb-1">${wo.description || 'No Description'}</p>
+                                <div class="flex flex-wrap gap-1 text-[10px] font-mono">
+                                    <span class="bg-slate-800 text-slate-400 border border-slate-700 px-1 rounded">${wo.siteid || 'N/A'}</span>
+                                    <span class="${getStatusColor(wo.status)} px-1 rounded border">${wo.status}</span>
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i> ${formatDate(wo.reportdate)}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+
+            // Update Sort Button Text
+            const sortBtn = document.getElementById('sort-btn');
+            if (sortBtn) {
+                const isDesc = state.sortBy.startsWith('-');
+                sortBtn.innerHTML = `<i data-lucide="arrow-down-up" class="w-3 h-3"></i> Sort: ${isDesc ? 'Newest' : 'Oldest'}`;
+            }
+
+            // Pagination
+            const paginationContainer = document.getElementById('pagination-controls');
+            if (state.nextPageHref) {
+                paginationContainer.innerHTML = `
+                    <span class="text-xs text-slate-500">Page ${state.page}</span>
+                    <button onclick="fetchWorkOrders('${state.nextPageHref}')" class="flex items-center gap-1 px-3 py-1.5 bg-slate-900 border border-slate-700 text-slate-300 text-xs font-medium rounded hover:bg-slate-800 transition-colors">
+                        Next
+                        <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                    </button>
+                `;
+            } else {
+                paginationContainer.innerHTML = `<span class="text-xs text-slate-500 w-full text-center">End of results</span>`;
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function renderDetails(data) {
+            // Hide loading
+            document.getElementById('detail-loading').classList.add('hidden');
+            document.getElementById('details-content').classList.remove('hidden');
+            document.getElementById('details-content').classList.add('flex');
+            document.getElementById('detail-actions').classList.remove('hidden');
+
+            // Map Data to UI
+            setText('detail-wonum', data.wonum);
+            setText('detail-site', data.siteid);
+            setText('detail-desc', data.description);
+            setText('detail-asset', data.assetnum || 'N/A');
+            setText('detail-location', data.location || 'N/A');
+            setText('detail-start', formatDate(data.targstartdate));
+            setText('detail-finish', formatDate(data.targcompdate || data.targetFinish)); // targeted vs scheduled
+            setText('detail-reportdate', formatDate(data.reportdate));
+            setText('detail-worktype', data.worktype || 'WO');
+
+            // Extra Fields
+            setText('detail-reportedby', data.reportedby || '-');
+            setText('detail-duration', data.estdur ? `${data.estdur} hrs` : '-');
+            setText('detail-woclass', data.woclass_description || data.woclass || 'Work Order');
+            setText('detail-failurecode', data.failurecode || 'None');
+
+            // Status Styling
+            const statusEl = document.getElementById('detail-status');
+            statusEl.innerText = data.status;
+            statusEl.className = `px-3 py-1 rounded-full text-sm font-bold border ${getStatusColor(data.status)}`;
+        }
+
+        function renderStats(count, page) {
+            document.getElementById('total-count').innerText = count + (page > 1 ? "+" : "");
+            document.getElementById('page-num').innerText = page;
+        }
+
+        function selectRecord(wo) {
+            state.selectedHref = wo.href;
+            renderList(); // Re-render to update selection highlight
+            fetchDetails(wo.href);
+        }
+
+        // --- HELPERS ---
+
+        function setText(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = value || '--';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '--';
+            try {
+                return new Date(dateStr).toLocaleDateString() + ' ' + new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
+        function getStatusColor(status) {
+            const s = (status || '').toUpperCase();
+            if (['APPR', 'COMP', 'CLOSE'].includes(s)) return 'bg-emerald-900/30 text-emerald-400 border-emerald-800';
+            if (['WAPPR'].includes(s)) return 'bg-amber-900/30 text-amber-400 border-amber-800';
+            if (['INPRG'].includes(s)) return 'bg-blue-900/30 text-blue-400 border-blue-800';
+            if (['CAN'].includes(s)) return 'bg-red-900/30 text-red-400 border-red-800';
+            return 'bg-slate-800 text-slate-400 border-slate-700';
+        }
+
+        function updateConnectionStatus(text, isGood) {
+            const el = document.getElementById('connection-status');
+            el.innerHTML = `
+                <span class="w-2 h-2 rounded-full ${isGood ? 'bg-green-500' : 'bg-red-500'}"></span>
+                ${text}
+            `;
+        }
+
+        function toggleSort() {
+            state.sortBy = state.sortBy === '-reportdate' ? '+reportdate' : '-reportdate';
+            // Reset to page 1 when sorting changes usually a good idea
+            state.page = 1;
+            fetchWorkOrders();
+        }
+
+        // Init
+        window.addEventListener('load', () => fetchWorkOrders());
+
+    </script>
+</body>
+
+</html>

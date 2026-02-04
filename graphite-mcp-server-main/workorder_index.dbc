@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script SYSTEM "script.dtd">
+<script author="markusvankempen" scriptname="WorkOrderIndex">
+  <description>Add index to WORKORDER table for Status queries</description>
+  
+  <statements>
+    <specify_index object="WORKORDER" name="WORKORDER_NDX1" unique="false">
+      <indexkey column="REPORTDATE" ascending="true"/>
+      <indexkey column="STATUS" ascending="true"/>
+      <indexkey column="SITEID" ascending="true"/>
+    </specify_index>
+  </statements>
+</script>

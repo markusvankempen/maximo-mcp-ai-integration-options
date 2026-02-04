@@ -1,0 +1,1 @@
+UI Components are components that depend on `Carbon` and they provide UI capabilities that are not in carbon.   These components should not depend directly on the Maximo JavaScript Framework.  Like Carbon, these components, should be re-usable by other Projects.

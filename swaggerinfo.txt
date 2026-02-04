@@ -1,0 +1,2 @@
+The Swagger API documentation for IBM Maximo Manage can typically be accessed through the following URL structure: 
+https://[host]:[port]/maximo/oslc/oas/api.html

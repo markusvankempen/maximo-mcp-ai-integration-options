@@ -1,0 +1,1034 @@
+=== ASSET Schema ===
+Object Structure: MXAPIASSET
+Description: Maximo API for Asset
+Primary Key: siteid, assetnum
+Unique ID: assetuid
+
+Properties: 155
+Detail Level: standard
+Token Efficiency: 74.7% reduction (100.39 KB → 25.39 KB)
+
+Properties:
+
+  expectedlifedate
+    Title: Expected EOL
+    Type: string (DATE)
+    Description: The date that the asset reaches the expected useful life date. This date is calculated by using the Asset's original installation date and its expected useful life, which is defined by manufacturer or industry standard.
+    Search Type: EXACT
+
+  parent
+    Title: Parent
+    Type: string (UPPER)
+    Description: Parent Asset Number
+    Max Length: 25
+    Has List: Yes
+    Search Type: WILDCARD
+
+  installdate
+    Title: Installation Date
+    Type: string (DATE)
+    Description: Installation Date
+    Search Type: EXACT
+
+  pluscsumeu
+    Title: Accuracy EU
+    Type: string (UPPER)
+    Description: This field is summed with the %Span, %URV, and %Reading EU fields to obtain the total accuracy of the asset.
+    Max Length: 15
+    Search Type: WILDCARD
+
+  localref
+    Type: string
+
+  eq1
+    Title: Eq1
+    Type: string (ALN)
+    Description: Asset Extra Field #1
+    Max Length: 10
+    Search Type: WILDCARD
+
+  productid
+    Title: Product ID
+    Type: string (UPPER)
+    Description: Product ID, relates an asset to a product
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  assettype_description
+    Type: string
+
+  usage_description
+    Type: string
+
+  eq3
+    Title: Eq3
+    Type: string (ALN)
+    Description: Asset Extra Field #3
+    Max Length: 10
+    Search Type: WILDCARD
+
+  moddowntimehist
+    Type: array
+    Related Object: MODDOWNTIMEHIST
+    Note: Use full mode to see nested schema
+
+  eq2
+    Title: Eq2
+    Type: string (ALN)
+    Description: Asset Extra Field #2
+    Max Length: 10
+    Search Type: WILDCARD
+
+  usage
+    Title: Usage
+    Type: string (ALN)
+    Description: Usage
+    Max Length: 15
+    Has List: Yes
+    Search Type: WILDCARD
+
+  eq5
+    Title: Eq5
+    Type: number (AMOUNT)
+    Description: Asset Extra Field #5
+    Max Length: 11
+    Search Type: EXACT
+
+  newlocation
+    Title: To Location
+    Type: string (UPPER)
+    Description: NEWLOCATION
+    Max Length: 12
+    Has List: Yes
+    Search Type: NONE
+
+  eq4
+    Title: Eq4
+    Type: string (ALN)
+    Description: Asset Extra Field #4
+    Max Length: 10
+    Search Type: WILDCARD
+
+  eq7
+    Title: Eq7
+    Type: number (DECIMAL)
+    Description: Asset Extra Field #7
+    Max Length: 16
+    Search Type: EXACT
+
+  eq6
+    Title: Eq6
+    Type: string (DATETIME)
+    Description: Asset Extra Field #6
+    Search Type: EXACT
+
+  industryhealthscore
+    Title: Industry Standard Health Score
+    Type: number (FLOAT)
+    Description: Industry standard health score in numeric format
+    Max Length: 9
+    Search Type: EXACT
+
+  eq9
+    Title: Eq9
+    Type: string (ALN)
+    Description: Asset Extra Field #9
+    Max Length: 10
+    Search Type: WILDCARD
+
+  pluscsumspan
+    Title: %SPAN
+    Type: string (UPPER)
+    Description: This field is summed with the %Reading, %URV, and Accuracy EU fields to obtain the total accuracy of the asset.
+    Max Length: 15
+    Search Type: WILDCARD
+
+  eq8
+    Title: Eq8
+    Type: string (ALN)
+    Description: Asset Extra Field #8
+    Max Length: 10
+    Search Type: WILDCARD
+
+  startmeasure
+    Title: Start Measure
+    Type: number (DECIMAL)
+    Description: A value that identifies the start of the linear asset.  The absolute value of the end measure minus the start measure will determine the length of the linear asset.  The start measure and the end measure also determine the boundary measures for any features or relationships applied to the asset.
+    Max Length: 11
+    Search Type: EXACT
+
+  devicetype
+    Title: Device Type
+    Type: string (ALN)
+    Description: Device Type
+    Max Length: 50
+    Search Type: WILDCARD
+
+  pluscisinhousecal
+    Title: Internal Calibration
+    Type: boolean (YORN)
+    Description: When selected indicates that this tool is calibrated in house. The default is cleared.
+    Search Type: EXACT
+
+  pluscvendor
+    Title: Calibration Vendor
+    Type: string (UPPER)
+    Description: Vendor/Facility that does the actual calibration.
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  rotsuspacct
+    Title: Rotating Suspense Account
+    Type: string (GL)
+    Description: Rotating Repairs Suspense Account.
+    Max Length: 23
+    Search Type: WILDCARD
+
+  totunchargedcost
+    Title: Total Uncharged Cost
+    Type: number (AMOUNT)
+    Description: Uncharged Cost Total
+    Max Length: 11
+    Search Type: EXACT
+
+  children
+    Title: Children
+    Type: boolean (YORN)
+    Description: Has children
+    Search Type: EXACT
+
+  toolrate
+    Title: Tool Rate
+    Type: number (AMOUNT)
+    Description: Tool Rate
+    Max Length: 11
+    Search Type: EXACT
+
+  pluscismteclass_description
+    Type: string
+
+  href
+    Type: string
+
+  removefromactivesp
+    Title: Remove Asset Reference from Active Safety Plans
+    Type: boolean (YORN)
+    Description: Remove Asset Reference from Active Safety Plans
+    Search Type: NONE
+
+  pluscoprgeto
+    Title: To
+    Type: string (UPPER)
+    Description: Enter the maximum numeric value of the operating range of the tool. This field is used in conjuction with the Operating Range From field.
+    Max Length: 15
+    Search Type: WILDCARD
+
+  mainthierchy
+    Title: Maintain Hierarchy
+    Type: boolean (YORN)
+    Description: Maintain Hierarchy
+    Has List: Yes
+    Search Type: EXACT
+
+  methodname
+    Title: Scoring Method
+    Type: string (UPPER)
+    Description: The scoring method applied to the asset.
+    Max Length: 50
+    Search Type: NONE
+
+  modelid
+    Title: Import ID
+    Type: string (ALN)
+    Description: Import ID Typically from a BIM model or COBie data set.
+    Max Length: 45
+    Search Type: WILDCARD
+
+  enddescription
+    Title: Asset End
+    Type: string (ALN)
+    Description: Free-form text describing the end of this linear asset.
+    Max Length: 100
+    Search Type: WILDCARD
+
+  ancestor
+    Title: Ancestor
+    Type: string (UPPER)
+    Description: Root Parent
+    Max Length: 25
+    Search Type: WILDCARD
+
+  binnum
+    Title: Bin
+    Type: string (ALN)
+    Description: Bin Number (Rotable Asset).
+    Max Length: 8
+    Has List: Yes
+    Search Type: WILDCARD
+
+  depreciationpending
+    Title: Depreciation Pending
+    Type: boolean (YORN)
+    Description: Indicates that generation of the depreciation schedule is pending final receipt or invoice of the PO that this rotating asset was purchased on.
+    Search Type: EXACT
+
+  assetmeter
+    Type: array
+    Related Object: ASSETMETER
+    Note: Use full mode to see nested schema
+
+  estendoflife
+    Title: Estimated EOL
+    Type: string (DATE)
+    Description: The date when the asset reaches its end of life. This date is based on the condition of the asset.
+    Search Type: EXACT
+
+  replacecost
+    Title: Replacement Cost
+    Type: number (AMOUNT)
+    Description: Replacement Cost
+    Max Length: 11
+    Search Type: EXACT
+
+  industryhealthgrade
+    Title: Industry Standard Health Grade
+    Type: string (ALN)
+    Description: Industry standard health grade in alphanumeric format
+    Max Length: 20
+    Search Type: WILDCARD
+
+  lastauditdate
+    Title: Last Audit Date
+    Type: string (DATETIME)
+    Description: Asset last audited date
+    Search Type: EXACT
+
+  priority
+    Title: Priority
+    Type: integer (INTEGER)
+    Description: Asset Priority will copied to Work Order when entered.
+    Max Length: 11
+    Search Type: EXACT
+
+  groupname
+    Title: Meter Group
+    Type: string (UPPER)
+    Description: All meters belonging to this asset's metergroup are automatically associated with this Asset in the AssetMeter object. Additions to the meter group may also be added to this Asset's AssetMeters.
+    Max Length: 10
+    Has List: Yes
+    Search Type: WILDCARD
+
+  rolltoallchildren
+    Title: Roll New Status to All Child Assets
+    Type: boolean (YORN)
+    Description: Roll New Status to All Child Assets
+    Search Type: NONE
+
+  pluscismteclass
+    Title: M&TE Classification
+    Type: string (UPPER)
+    Description: If the Is (M&TE) checkbox is selected, specify the classification for tool.
+    Max Length: 80
+    Has List: Yes
+    Search Type: WILDCARD
+
+  saddresscode
+    Title: Service Address
+    Type: string (UPPER)
+    Description: The address code identifies a service address. It must be unique by site for each service address.
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  pluscclass_description
+    Type: string
+
+  status
+    Title: Status
+    Type: string (ALN)
+    Description: Status of the asset, for example, not ready, operating, or decommissioned.
+    Max Length: 20
+    Has List: Yes
+    Search Type: WILDCARD
+
+  hierarchypath
+    Title: Hierarchy Path
+    Type: string (ALN)
+    Description: Sets value to HIERARCHYPATH, if the asset has an associated CLASSSTRUCTURE record
+    Max Length: 254
+    Search Type: NONE
+
+  serviceaddress
+    Type: array
+    Related Object: SERVICEADDRESS
+    Note: Use full mode to see nested schema
+
+  pluscassetdept
+    Title: Asset Department
+    Type: string (ALN)
+    Description: Enter an asset department or click Select Value and choose one from the list.
+    Max Length: 80
+    Has List: Yes
+    Search Type: WILDCARD
+
+  plusciscondesc
+    Title: Is Contaminated Description
+    Type: string (ALN)
+    Description: This field is available when the Is Contaminated? Field is selected. It is used to enter a description of the contamination or other pertinent information.
+    Max Length: 250
+    Search Type: WILDCARD
+
+  pluscloopnum
+    Title: Loop Number
+    Type: string (UPPER)
+    Description: Enter the loop number of the asset, if applicable.
+    Max Length: 15
+    Search Type: WILDCARD
+
+  pluscoprgefrom
+    Title: Operating Range From
+    Type: string (UPPER)
+    Description: Enter the minimum numeric value of the operating range of the tool. This field is used in conjuction with the Operating Range To field.
+    Max Length: 15
+    Search Type: WILDCARD
+
+  autolocate
+    Title: Formatted Geometry
+    Type: string (CLOB)
+    Description: String representation of the record geometry
+    Max Length: 999999
+    Search Type: NONE
+
+  manufacturer
+    Title: Manufacturer
+    Type: string (UPPER)
+    Description: Manufacturer Number
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  totdowntime
+    Title: Total Downtime
+    Type: number (DURATION)
+    Description: Total Downtime
+    Max Length: 8
+    Search Type: EXACT
+
+  startdescription
+    Title: Asset Start
+    Type: string (ALN)
+    Description: Free-form text describing the start of this linear asset.
+    Max Length: 100
+    Search Type: WILDCARD
+
+  pluscpmextdate
+    Title: Extend Date
+    Type: boolean (YORN)
+    Description: This check box is selected if the date of the associated PM is extended.
+    Search Type: EXACT
+
+  vendor
+    Title: Vendor
+    Type: string (UPPER)
+    Description: Manufacturer-Vendor Code
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  assetnum
+    Title: Asset
+    Type: string (UPPER)
+    Description: Asset Number
+    Max Length: 25
+    Has List: Yes
+    Search Type: WILDCARD
+
+  disabled
+    Title: Disabled
+    Type: boolean (YORN)
+    Description: Is this record active?
+    Search Type: EXACT
+
+  doclinks
+    Type: object (DOCLINKS)
+
+  assettype
+    Title: Type
+    Type: string (UPPER)
+    Description: The predefined type of this asset.
+    Max Length: 15
+    Has List: Yes
+    Search Type: WILDCARD
+
+  conditioncode
+    Title: Condition Code
+    Type: string (UPPER)
+    Description: The item condition of the asset
+    Max Length: 30
+    Has List: Yes
+    Search Type: WILDCARD
+
+  description_longdescription
+    Title: Details
+    Type: string (LONGALN)
+    Description: Long Description for Asset Short Description (One Line)
+    Max Length: 32000
+    Search Type: WILDCARD
+
+  pluscsumdir_description
+    Type: string
+
+  changeby
+    Title: Changed By
+    Type: string (UPPER)
+    Description: Last Modified By
+    Max Length: 100
+    Search Type: WILDCARD
+
+  endmeasure
+    Title: End Measure
+    Type: number (DECIMAL)
+    Description: A value that identifies the end of the linear asset.  The absolute value of the end measure minus the start measure will determine the length of the linear asset.  The start measure and the end measure also determine the boundary measures for any features or relationships applied to the asset.
+    Max Length: 11
+    Search Type: EXACT
+
+  assettag
+    Title: Asset Tag
+    Type: string (ALN)
+    Description: Asset Tag Number
+    Max Length: 64
+    Has List: Yes
+    Search Type: WILDCARD
+
+  expectedlife
+    Title: Expected Life
+    Type: integer (INTEGER)
+    Description: Expected life of the asset, expressed in years.  This value is based on the typical useful life that a manufacturer or industry standard recommends for an asset or asset type.
+    Max Length: 11
+    Search Type: EXACT
+
+  shiftnum
+    Title: Shift
+    Type: string (UPPER)
+    Description: Shift of the calendar
+    Max Length: 8
+    Has List: Yes
+    Search Type: WILDCARD
+
+  sendersysid
+    Title: Sender System ID
+    Type: string (ALN)
+    Description: Column used by ERP-Integration (APIs)
+    Max Length: 50
+    Search Type: WILDCARD
+
+  statusdate
+    Title: Last Changed Date
+    Type: string (DATETIME)
+    Description: Asset Status Date
+    Search Type: EXACT
+
+  pluscoprgeeu_description
+    Type: string
+
+  budgetcost
+    Title: Budgeted
+    Type: number (AMOUNT)
+    Description: Budgeted Cost Of Work For The Year
+    Max Length: 11
+    Search Type: EXACT
+
+  geometry
+    Title: Geometry
+    Type: string (CLOB)
+    Description: Non persistent fields to access the MBO geometry
+    Max Length: 999999
+    Search Type: NONE
+
+  tloamhash
+    Title: Partition ID
+    Type: string (UPPER)
+    Description: The unique ID which is used to identify a partition from a discovery perspective.  This field can be used by reconciliation to link and audit authorized partitions.
+    Max Length: 192
+    Search Type: WILDCARD
+
+  autowogen
+    Title: Automatically Generate Work Orders
+    Type: boolean (YORN)
+    Description: Flag that indicates whether to start the wogen process when meter frequency is reached for an asset
+    Search Type: EXACT
+
+  sourcesysid
+    Title: Source System ID
+    Type: string (ALN)
+    Description: Source System ID
+    Max Length: 10
+    Search Type: WILDCARD
+
+  pluscassetdept_description
+    Type: string
+
+  calnum
+    Title: Calendar
+    Type: string (UPPER)
+    Description: Calendar Code
+    Max Length: 8
+    Has List: Yes
+    Search Type: WILDCARD
+
+  ownersysid
+    Title: Owner System ID
+    Type: string (ALN)
+    Description: Owner System ID
+    Max Length: 10
+    Search Type: WILDCARD
+
+  ytdcost
+    Title: YTD Cost
+    Type: number (AMOUNT)
+    Description: Year To Date Cost
+    Max Length: 11
+    Search Type: EXACT
+
+  pmnextfaildt
+    Title: Predicted next failure date
+    Type: string (DATETIME)
+    Description: Predicted next failure date from Prescriptive Maintenance on Cloud
+    Search Type: EXACT
+
+  moved
+    Title: Moved
+    Type: boolean (YORN)
+    Description: flag indicates active or moved
+    Search Type: EXACT
+
+  toolcontrolaccount
+    Title: Control Account
+    Type: string (GL)
+    Description: Control Account
+    Max Length: 23
+    Search Type: WILDCARD
+
+  pluscismte
+    Title: Is M&TE
+    Type: boolean (YORN)
+    Description: When selected, indicates that the selected equipment is a piece of measurement and test equipment. The default for this check box is cleared (not M&TE).
+    Search Type: EXACT
+
+  assethealth
+    Title: Asset Health
+    Type: integer (INTEGER)
+    Description: Asset Health
+    Max Length: 11
+    Search Type: EXACT
+
+  totalcost
+    Title: Total Cost
+    Type: number (AMOUNT)
+    Description: Total Cost
+    Max Length: 11
+    Search Type: EXACT
+
+  _rowstamp
+    Type: string
+
+  pluscduedate
+    Title: Calibration Due Date
+    Type: string (DATETIME)
+    Description: The date that the next 'Cal' work type PM will be generated
+    Search Type: EXACT
+
+  tloampartition
+    Title: Partition
+    Type: boolean (YORN)
+    Description: Is this asset a partition?
+    Search Type: EXACT
+
+  siteid
+    Title: Site
+    Type: string (UPPER)
+    Description: Site Identifier
+    Max Length: 8
+    Has List: Yes
+    Search Type: WILDCARD
+
+  unchargedcost
+    Title: Uncharged Cost
+    Type: number (AMOUNT)
+    Description: Uncharged Cost
+    Max Length: 11
+    Search Type: EXACT
+
+  pluscmodelnum
+    Title: Model Number
+    Type: string (ALN)
+    Description: Enter the model number of the tool, if applicable. This field may be populated from the Assets (Cal) application.
+    Max Length: 8
+    Search Type: WILDCARD
+
+  assetuid
+    Title: ASSETUID
+    Type: integer (BIGINT)
+    Description: Unique Identifier
+    Max Length: 11
+    Search Type: EXACT
+
+  status_description
+    Type: string
+
+  newparent
+    Title: To Parent
+    Type: string (UPPER)
+    Description: NEWPARENT
+    Max Length: 25
+    Has List: Yes
+    Search Type: NONE
+
+  returnedtovendor
+    Title: Returned To Vendor
+    Type: boolean (YORN)
+    Description: Indicates whether the current asset was returned to the responsible vendor.
+    Search Type: EXACT
+
+  changepmstatus
+    Title: Change the Status of All Associated PMs to Inactive
+    Type: boolean (YORN)
+    Description: Change the Status of All Associated PMs to Inactive
+    Search Type: NONE
+
+  lrm
+    Title: LRM
+    Type: string (UPPER)
+    Description: The Linear Referencing Method for this asset.  Defined using the Add/Modify Linear Referencing Methods Action, an LRM is a means for locating any point (e.g. feature, relationship, work) along the linear asset using a measure and a known point.  Changing the LRM is not recommended unless the base unit of measure is the same in the new LRM.
+    Max Length: 25
+    Has List: Yes
+    Search Type: EXACT
+
+  changedate
+    Title: Changed Date
+    Type: string (DATETIME)
+    Description: Last Modified Date
+    Search Type: EXACT
+
+  templateid
+    Title: Asset Template
+    Type: string (UPPER)
+    Description: Identifies the asset template. Enter a value to identify a new asset template. This value must be unique for all asset templates.
+    Max Length: 12
+    Search Type: WILDCARD
+
+  orgid
+    Title: Organization
+    Type: string (UPPER)
+    Description: Organization Identifier
+    Max Length: 8
+    Has List: Yes
+    Search Type: WILDCARD
+
+  pluscsolution
+    Title: Buffer Solution Flag
+    Type: boolean (YORN)
+    Description: Buffer Solution Flag
+    Search Type: EXACT
+
+  removefromactiveroutes
+    Title: Remove Asset Reference from Active Routes
+    Type: boolean (YORN)
+    Description: Remove Asset Reference from Active Routes
+    Search Type: NONE
+
+  itemnum
+    Title: Rotating Item
+    Type: string (UPPER)
+    Description: Inventory Item Number
+    Max Length: 30
+    Has List: Yes
+    Search Type: WILDCARD
+
+  lastauditby
+    Title: Last Audit By
+    Type: string (UPPER)
+    Description: Asset last audit done by
+    Max Length: 100
+    Search Type: WILDCARD
+
+  itemsetid
+    Title: Item Set
+    Type: string (UPPER)
+    Description: Set identifier for the item.
+    Max Length: 8
+    Has List: Yes
+    Search Type: WILDCARD
+
+  _id
+    Type: string
+
+  plusclploc
+    Title: Loop Location
+    Type: string (UPPER)
+    Description: Defines the location number of the associated Loop Calibration record. To modify a loop location, click Move/Modify Assets or from the Select Action menu, select Move/Modify Assets.
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  eq24
+    Title: Eq24
+    Type: number (DECIMAL)
+    Description: Asset Extra Field #24
+    Max Length: 16
+    Search Type: EXACT
+
+  islinear
+    Title: Linear
+    Type: boolean (YORN)
+    Description: When checked, identifies an asset as a linear asset (e.g. road, railway).
+    Search Type: EXACT
+
+  eq23
+    Title: Eq23
+    Type: string (DATETIME)
+    Description: Asset Extra Field #23
+    Search Type: EXACT
+
+  iscalibration
+    Title: Calibration
+    Type: boolean (YORN)
+    Description: Determines whether an asset is calibrated. If you select this checkbox, the calibration details are available. Specify the calibration details for the asset.
+    Search Type: EXACT
+
+  serialnum
+    Title: Serial #
+    Type: string (UPPER)
+    Description: Asset Serial Number
+    Max Length: 64
+    Has List: Yes
+    Search Type: WILDCARD
+
+  downtimereport
+    Type: array
+    Related Object: DOWNTIMEREPORT
+    Note: Use full mode to see nested schema
+
+  description
+    Title: Description
+    Type: string (ALN)
+    Description: Describes the asset. To enter or view additional information, click the Long Description button.
+    Max Length: 100
+    Search Type: WILDCARD
+
+  externalrefid
+    Title: External Reference ID
+    Type: string (ALN)
+    Description: External Reference ID
+    Max Length: 10
+    Search Type: WILDCARD
+
+  pluscsumdir
+    Title: Applied As
+    Type: string (UPPER)
+    Description: Enter the direction of the accuracy fields (%Span, %URV, and %Reading). Valid entries are  +, -, and +/-.
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  pluscduedate_np
+    Title: Calibration Due Date
+    Type: string (DATETIME)
+    Description: The date when the calibration of the asset is due.
+    Search Type: NONE
+
+  defaultrepfac
+    Title: Default Repair Facility
+    Type: string (UPPER)
+    Description: The default repair facility that is assigned to work orders generated for PMs and Condition Monitoring. The repair facility can be changed during the manual work order generation process.
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  direction_description
+    Type: string
+
+  _imagelibref
+    Type: string
+
+  plusciscontam
+    Title: Is Contaminated
+    Type: boolean (YORN)
+    Description: When selected, indicates that this tool is contaminated and allows you to enter a description of the contamination. The default is this field is cleared.
+    Search Type: EXACT
+
+  warrantyexpdate
+    Title: Warranty Expiration Date
+    Type: string (DATE)
+    Description: Warranty Expiration Date
+    Search Type: EXACT
+
+  assetspec
+    Type: array
+    Related Object: ASSETSPEC
+    Note: Use full mode to see nested schema
+
+  direction
+    Title: Direction
+    Type: string (UPPER)
+    Description: Direction of this linear asset, for example North, South, East or West
+    Max Length: 30
+    Has List: Yes
+    Search Type: WILDCARD
+
+  eq12
+    Title: Eq12
+    Type: number (AMOUNT)
+    Description: Asset Extra Field #12
+    Max Length: 11
+    Search Type: EXACT
+
+  eq11
+    Title: Eq11
+    Type: string (ALN)
+    Description: Asset Extra Field #11
+    Max Length: 10
+    Search Type: WILDCARD
+
+  eq10
+    Title: Eq10
+    Type: string (ALN)
+    Description: Asset Extra Field #10
+    Max Length: 10
+    Search Type: WILDCARD
+
+  pluscclass
+    Title: Class
+    Type: string (UPPER)
+    Description: Enter a value or click Select Value and choose an asset classification of the tool.
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+
+  pluscsumread
+    Title: % READING
+    Type: string (UPPER)
+    Description: This field is summed with the %Span, %URV, and Accuracy EU fields to obtain the total accuracy of the asset.
+    Max Length: 15
+    Search Type: WILDCARD
+
+  pluscoprgeeu
+    Title: Units
+    Type: string (ALN)
+    Description: Enter the engineering units for the Operating Range values or click Select Value and choose the units from the list.
+    Max Length: 15
+    Has List: Yes
+    Search Type: WILDCARD
+
+  deviceid
+    Title: Device Id
+    Type: string (ALN)
+    Description: Device Id
+    Max Length: 50
+    Search Type: WILDCARD
+
+  invcost
+    Title: Inventory Cost
+    Type: number (AMOUNT)
+    Description: Cost on WO or PO Line items flagged as CHARGESTORE
+    Max Length: 11
+    Search Type: EXACT
+
+  newsite
+    Title: To Site
+    Type: string (UPPER)
+    Description: NEWSITE
+    Max Length: 8
+    Has List: Yes
+    Search Type: NONE
+
+  purchaseprice
+    Title: Purchase Price
+    Type: number (AMOUNT)
+    Description: Purchase Price
+    Max Length: 11
+    Search Type: EXACT
+
+  isrunning
+    Title: Asset Up
+    Type: boolean (YORN)
+    Description: Asset Status (Running-Not Running)
+    Search Type: EXACT
+
+  glaccount
+    Title: GL Account
+    Type: string (GL)
+    Description: GL Account Code for the Asset
+    Max Length: 23
+    Has List: Yes
+    Search Type: WILDCARD
+
+  itemtype
+    Title: Item Type
+    Type: string (UPPER)
+    Description: Item Type
+    Max Length: 15
+    Search Type: WILDCARD
+
+  failurecode
+    Title: Failure Class
+    Type: string (UPPER)
+    Description: Indicates Top Level Failure Hierarchy
+    Max Length: 8
+    Has List: Yes
+    Search Type: WILDCARD
+
+  pluscsumurv
+    Title: %URV
+    Type: string (UPPER)
+    Description: This field is summed with the %Span, %Reading, and Accuracy EU fields to obtain the total accuracy of the asset.
+    Max Length: 15
+    Search Type: WILDCARD
+
+  assetid
+    Title: Asset
+    Type: integer (BIGINT)
+    Description: unique id
+    Max Length: 11
+    Search Type: EXACT
+
+  defaultrepfacsiteid
+    Title: Repair Facility Site
+    Type: string (UPPER)
+    Description: The site for the repair facility.
+    Max Length: 8
+    Has List: Yes
+    Search Type: WILDCARD
+
+  well_maintained
+    Title: Prescriptive Maintenance on Cloud WELL_MAINTAINED
+    Type: integer (INTEGER)
+    Description: An attribute that is used in Prescriptive Maintenance on Cloud to specify the number of days before the next predicted failure date that scheduled maintenance can occur and the asset can be categorized as well maintained
+    Max Length: 11
+    Search Type: EXACT
+
+  newassetnum
+    Title: New Asset Number
+    Type: string (UPPER)
+    Description: New Asset Num
+    Max Length: 25
+    Has List: Yes
+    Search Type: NONE
+
+  pluscphyloc
+    Title: Physical Location
+    Type: string (ALN)
+    Description: Actual physical location of the asset.
+    Max Length: 250
+    Search Type: WILDCARD
+
+  location
+    Title: Location
+    Type: string (UPPER)
+    Description: Asset Location
+    Max Length: 12
+    Has List: Yes
+    Search Type: WILDCARD
+

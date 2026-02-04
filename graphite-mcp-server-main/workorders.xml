@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page id="workorder_page" controller="WorkOrderController">
+    <!-- Header: Required for all pages -->
+    <header-template title="Work Order Management">
+        <button label="Refresh" on-click="refreshData" icon="carbon:renew" />
+        <button label="New WO" on-click="createWO" icon="carbon:add" />
+    </header-template>
+
+    <!-- Data Source: Connected to Maximo with default sorting by reportdate descending -->
+    <maximo-datasource id="woDS" object-structure="mxapiwo" selection-mode="single" orderby="-reportdate">
+        <schema id="woSchema">
+            <attribute name="wonum" />
+            <attribute name="description" />
+            <attribute name="status" />
+            <attribute name="reportdate" />
+            <attribute name="siteid" />
+        </schema>
+    </maximo-datasource>
+
+    <!-- Layout: Responsive adaptive rows -->
+    <adaptive-row>
+        <!-- Table Column -->
+        <adaptive-column size="66">
+            <table id="woTable" datasource="woDS" title="Recent Work Orders">
+                <!-- Enabled sorting on columns -->
+                <table-column name="wonum" label="Number" sortable="true" />
+                <table-column name="description" label="Description" sortable="true" />
+                <table-column name="status" label="Status" sortable="true" />
+            </table>
+        </adaptive-column>
+
+        <!-- Detail Column: Visible when a record is selected -->
+        <adaptive-column size="33">
+            <box padding="1" hidden="{!woDS.selectedItem}">
+                <header-template title="Details: {woDS.selectedItem.wonum}" />
+                
+                <!-- Smart Inputs: Automatically handle labels and types from datasource -->
+                <smart-input datasource="woDS" attribute="description" />
+                <smart-input datasource="woDS" attribute="status" />
+                <smart-input datasource="woDS" attribute="reportdate" readonly="true" />
+                <smart-input datasource="woDS" attribute="siteid" readonly="true" />
+
+                <box padding-top="1" direction="row" halign="end">
+                    <button label="Save Changes" variant="primary" on-click="saveWO" />
+                </box>
+            </box>
+            
+            <!-- Placeholder when nothing is selected -->
+            <box padding="2" hidden="{woDS.selectedItem}" halign="center">
+                <text value="Select a work order to view details" color="text-02" />
+            </box>
+        </adaptive-column>
+    </adaptive-row>
+</page>

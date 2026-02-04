@@ -1,0 +1,115 @@
+{
+  "resource": "MXAPIASSET",
+  "description": "Maximo API for Asset",
+  "title": "ASSET",
+  "type": "object",
+  "properties": {
+    "expectedlifedate": {
+      "title": "Expected EOL",
+      "type": "string",
+      "remarks": "The date that the asset reaches the expected useful life date. This date is calculated by using the Asset's original installation date and its expected useful life, which is defined by manufacturer or industry standard.",
+      "subType": "DATE",
+      "searchType": "EXACT"
+    },
+    "installdate": {
+      "title": "Installation Date",
+      "type": "string",
+      "remarks": "Installation Date",
+      "subType": "DATE",
+      "searchType": "EXACT"
+    },
+    "estendoflife": {
+      "title": "Estimated EOL",
+      "type": "string",
+      "remarks": "The date when the asset reaches its end of life. This date is based on the condition of the asset.",
+      "subType": "DATE",
+      "searchType": "EXACT"
+    },
+    "lastauditdate": {
+      "title": "Last Audit Date",
+      "type": "string",
+      "remarks": "Asset last audited date",
+      "subType": "DATETIME",
+      "searchType": "EXACT"
+    },
+    "pluscpmextdate": {
+      "title": "Extend Date",
+      "type": "boolean",
+      "remarks": "This check box is selected if the date of the associated PM is extended.",
+      "subType": "YORN",
+      "searchType": "EXACT"
+    },
+    "statusdate": {
+      "title": "Last Changed Date",
+      "type": "string",
+      "remarks": "Asset Status Date",
+      "subType": "DATETIME",
+      "searchType": "EXACT"
+    },
+    "ytdcost": {
+      "title": "YTD Cost",
+      "type": "number",
+      "remarks": "Year To Date Cost",
+      "maxLength": 11,
+      "subType": "AMOUNT",
+      "searchType": "EXACT"
+    },
+    "pmnextfaildt": {
+      "title": "Predicted next failure date",
+      "type": "string",
+      "remarks": "Predicted next failure date from Prescriptive Maintenance on Cloud",
+      "subType": "DATETIME",
+      "searchType": "EXACT"
+    },
+    "pluscduedate": {
+      "title": "Calibration Due Date",
+      "type": "string",
+      "remarks": "The date that the next 'Cal' work type PM will be generated",
+      "subType": "DATETIME",
+      "searchType": "EXACT"
+    },
+    "changedate": {
+      "title": "Changed Date",
+      "type": "string",
+      "remarks": "Last Modified Date",
+      "subType": "DATETIME",
+      "searchType": "EXACT"
+    },
+    "pluscduedate_np": {
+      "title": "Calibration Due Date",
+      "type": "string",
+      "remarks": "The date when the calibration of the asset is due.",
+      "subType": "DATETIME",
+      "searchType": "NONE"
+    },
+    "warrantyexpdate": {
+      "title": "Warranty Expiration Date",
+      "type": "string",
+      "remarks": "Warranty Expiration Date",
+      "subType": "DATE",
+      "searchType": "EXACT"
+    },
+    "well_maintained": {
+      "title": "Prescriptive Maintenance on Cloud WELL_MAINTAINED",
+      "type": "integer",
+      "remarks": "An attribute that is used in Prescriptive Maintenance on Cloud to specify the number of days before the next predicted failure date that scheduled maintenance can occur and the asset can be categorized as well maintained",
+      "maxLength": 11,
+      "subType": "INTEGER",
+      "searchType": "EXACT"
+    }
+  },
+  "pk": [
+    "siteid",
+    "assetnum"
+  ],
+  "uniqueid": "assetuid",
+  "required": [
+    "assetid",
+    "assetnum",
+    "changeby",
+    "changedate",
+    "moved",
+    "orgid",
+    "siteid"
+  ]
+}

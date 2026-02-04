@@ -1,0 +1,149 @@
+{
+  "resource": "MXAPIASSET",
+  "description": "Maximo API for Asset",
+  "pk": [
+    "siteid",
+    "assetnum"
+  ],
+  "title": "ASSET",
+  "type": "object",
+  "$ref": "oslc/jsonschemas/mxapiasset",
+  "uniqueid": "assetuid",
+  "properties": {
+    "status_description": {
+      "type": "string"
+    },
+    "serviceaddress": {
+      "objectName": "SERVICEADDRESS",
+      "type": "array",
+      "items": {
+        "definition": {
+          "subSchema": {
+            "$ref": "oslc/jsonschemas/mxapiasset/serviceaddress"
+          }
+        },
+        "type": "object"
+      },
+      "cardinality": "",
+      "relation": "SERVICEADDRESS"
+    },
+    "localref": {
+      "type": "string"
+    },
+    "downtimereport": {
+      "objectName": "DOWNTIMEREPORT",
+      "type": "array",
+      "items": {
+        "definition": {
+          "subSchema": {
+            "$ref": "oslc/jsonschemas/mxapiasset/downtimereport"
+          }
+        },
+        "type": "object"
+      },
+      "cardinality": "UNDEFINED",
+      "relation": "DOWNTIMEREPORT"
+    },
+    "moddowntimehist": {
+      "objectName": "MODDOWNTIMEHIST",
+      "type": "array",
+      "items": {
+        "definition": {
+          "subSchema": {
+            "$ref": "oslc/jsonschemas/mxapiasset/moddowntimehist"
+          }
+        },
+        "type": "object"
+      },
+      "cardinality": "UNDEFINED",
+      "relation": "MODDOWNTIMEHIST"
+    },
+    "description": {
+      "searchType": "WILDCARD",
+      "subType": "ALN",
+      "title": "Description",
+      "persistent": true,
+      "type": "string",
+      "remarks": "Describes the asset. To enter or view additional information, click the Long Description button.",
+      "maxLength": 100
+    },
+    "assetmeter": {
+      "objectName": "ASSETMETER",
+      "type": "array",
+      "items": {
+        "definition": {
+          "subSchema": {
+            "$ref": "oslc/jsonschemas/mxapiasset/assetmeter"
+          }
+        },
+        "type": "object"
+      },
+      "cardinality": "UNDEFINED",
+      "relation": "INT_ASSETMETER"
+    },
+    "_rowstamp": {
+      "type": "string"
+    },
+    "_imagelibref": {
+      "type": "string"
+    },
+    "assetnum": {
+      "searchType": "WILDCARD",
+      "subType": "UPPER",
+      "title": "Asset",
+      "persistent": true,
+      "type": "string",
+      "hasList": true,
+      "remarks": "Asset Number",
+      "maxLength": 25
+    },
+    "assetspec": {
+      "objectName": "ASSETSPEC",
+      "type": "array",
+      "items": {
+        "definition": {
+          "subSchema": {
+            "$ref": "oslc/jsonschemas/mxapiasset/assetspec"
+          }
+        },
+        "type": "object"
+      },
+      "cardinality": "UNDEFINED",
+      "relation": "ASSETSPECCLASS"
+    },
+    "href": {
+      "type": "string"
+    },
+    "_id": {
+      "type": "string"
+    },
+    "doclinks": {
+      "objectName": "DOCLINKS",
+      "type": "array",
+      "items": {
+        "definition": {
+          "subSchema": {
+            "$ref": "oslc/jsonschemas/mxapiasset/doclinks"
+          }
+        },
+        "type": "object"
+      },
+      "cardinality": "UNDEFINED",
+      "relation": "DOCLINKS"
+    },
+    "status": {
+      "default": "!NOT READY!",
+      "searchType": "WILDCARD",
+      "subType": "ALN",
+      "title": "Status",
+      "persistent": true,
+      "type": "string",
+      "hasList": true,
+      "remarks": "Status of the asset, for example, not ready, operating, or decommissioned.",
+      "maxLength": 20
+    }
+  },
+  "required": [
+    "assetnum"
+  ]
+}

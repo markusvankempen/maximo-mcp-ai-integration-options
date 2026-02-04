@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Maximo API Interaction Guide</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Maximo API Interaction Guide</h1>
+</header>
+<h1 id="maximo-api-interaction-ai-workflow-guide">Maximo API Interaction
+&amp; AI Workflow Guide</h1>
+<p><strong>Author:</strong> Markus van Kempen<br />
+<strong>Date:</strong> 3 Feb 2026</p>
+<hr />
+<h2 id="introduction">Introduction</h2>
+<p>This document is a comprehensive guide for developers, integrators,
+and Maximo administrators who want to leverage <strong>AI-assisted
+development</strong> to interact with the Maximo REST API. It covers: *
+Locating and understanding API documentation * Generating code (API
+calls, scripts, SQL) from natural language * Testing, simulating, and
+refining code through conversational AI * Building custom UI
+applications</p>
+<p><strong>Target Audience</strong>: Maximo Developers, Integration
+Specialists, and anyone working with the Maximo OSLC REST API.</p>
+<hr />
+<h2 id="prerequisites">1. Prerequisites</h2>
+<p>Before using this guide, ensure you have: * <strong>Maximo Instance
+Access</strong>: A running Maximo instance with the REST API enabled. *
+<strong>API Key</strong>: A valid Maximo API Key with appropriate
+permissions. Create this via <em>Security &gt; API Keys</em> in Maximo.
+* <strong>Node.js</strong> (v18+): Required for running the local proxy
+server. * <strong>AI IDE</strong> (Optional but Recommended): Cursor,
+Windsurf, Antigravity, or VS Code with Copilot.</p>
+<hr />
+<h2 id="documentation-resources">2. Documentation &amp; Resources</h2>
+<p>To effectively interact with Maximo, we use the following key
+resources:</p>
+<h3 id="a.-swaggeropenapi-documentation">A. Swagger/OpenAPI
+Documentation</h3>
+<p>The Swagger UI provides interactive API documentation.</p>
+<ul>
+<li><strong>URL Pattern</strong>:
+<code>https://[YOUR_MAXIMO_HOST]/maximo/oslc/oas/api.html</code></li>
+<li><strong>Usage</strong>: Browse Object Structures, try out queries,
+and view response schemas.</li>
+</ul>
+<h3 id="b.-schema-retrieval-commands">B. Schema Retrieval Commands</h3>
+<p>Automate retrieval of the full OpenAPI definition for offline
+analysis or AI context.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> GET <span class="st">&quot;https://[YOUR_MAXIMO_HOST]/maximo/api/oas/api.json&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">-H</span> <span class="st">&quot;apikey: [YOUR_API_KEY]&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">-o</span> maximo_openapi.json</span></code></pre></div>
+<h3 id="c.-api-request-examples">C. API Request Examples</h3>
+<p>Standard template for authenticated API requests.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> GET <span class="st">&quot;https://[YOUR_MAXIMO_HOST]/maximo/api/os/mxwo?oslc.pageSize=10&amp;lean=1&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">-H</span> <span class="st">&quot;apikey: [YOUR_API_KEY]&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span></span></code></pre></div>
+<h3 id="d.-external-references">D. External References</h3>
+<ul>
+<li><a
+href="https://developer.ibm.com/apis/catalog/maximo--maximo-manage-rest-api/Introduction">IBM
+Maximo Manage REST API</a> — Official IBM documentation.</li>
+</ul>
+<hr />
+<h2 id="oslc-query-syntax-reference">3. OSLC Query Syntax Reference</h2>
+<p>The Maximo API uses <strong>OSLC (Open Services for Lifecycle
+Collaboration)</strong> query parameters. Understanding these is
+critical.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>oslc.where</code></td>
+<td style="text-align: left;">Filter records using a condition</td>
+<td style="text-align: left;"><code>status="APPR"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>oslc.select</code></td>
+<td style="text-align: left;">Specify which fields to return</td>
+<td style="text-align: left;"><code>wonum,description,status</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>oslc.orderBy</code></td>
+<td style="text-align: left;">Sort results; <code>-</code> prefix for
+descending</td>
+<td style="text-align: left;"><code>-reportdate</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>oslc.pageSize</code></td>
+<td style="text-align: left;">Limit number of records returned</td>
+<td style="text-align: left;"><code>10</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>lean</code></td>
+<td style="text-align: left;">Return simplified JSON (no metadata)</td>
+<td style="text-align: left;"><code>1</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Combining Conditions (<code>oslc.where</code>):</strong> *
+<strong>AND</strong>: <code>status="APPR" and siteid="BEDFORD"</code> *
+<strong>OR</strong>: <code>status="APPR" or status="INPRG"</code> *
+<strong>Comparison</strong>: <code>wopriority&lt;=2</code> or
+<code>reportdate&gt;="2026-01-01"</code> * <strong>LIKE</strong>:
+<code>description like "%pump%"</code> (wildcard search)</p>
+<hr />
+<h2
+id="demonstrating-code-generation-from-natural-language-ai-interface">4.
+Demonstrating Code Generation from Natural Language &amp; AI
+Interface</h2>
+<p>This section explains how the <strong>AI Editor demonstrates code
+generation</strong> from simple text instructions.</p>
+<h3 id="the-workflow">4.1 The Workflow</h3>
+<p>The AI bridges business requirements and technical
+implementation:</p>
+<ol type="1">
+<li><strong>Natural Language Processing</strong>: The Editor interprets
+high-level instructions (e.g., “Find all pumps that failed last month”)
+and maps them to specific Maximo artifacts.</li>
+<li><strong>Context-Aware Interface</strong>: By referencing the Swagger
+API Definition, the AI maintains “schema awareness.” It knows that a
+“Work Order” corresponds to <code>MXWO</code> and that “Priority 1” maps
+to <code>wopriority=1</code>.</li>
+<li><strong>Benefits</strong>: This eliminates manual lookup of column
+names and API endpoints.</li>
+</ol>
+<figure>
+<img src="Antigravity-Cursor-VSCode.png" alt="AI IDE Interface" />
+<figcaption aria-hidden="true">AI IDE Interface</figcaption>
+</figure>
+<h3 id="universal-applicability">4.2 Universal Applicability</h3>
+<p>While this guide references specific tools, the core workflow is
+<strong>generic</strong> and platform-agnostic: * <strong>AI
+Assistants</strong>: Antigravity, Cursor, Windsurf, VS Code Copilot, or
+any LLM-driven coding environment. * <strong>Languages</strong>: Python,
+JavaScript, Java, Go, or any language with HTTP support.</p>
+<hr />
+<h2
+id="generating-different-code-types-scripts-sql-api-by-business-context">5.
+Generating Different Code Types (Scripts, SQL, API) by Business
+Context</h2>
+<p>The AI generates various code artifacts depending on the user’s
+context.</p>
+<h3 id="a.-oslc-rest-api-calls">A. OSLC REST API Calls</h3>
+<ul>
+<li><p><strong>Context</strong>: Web Apps, Integrations, Testing
+(Postman/Curl).</p></li>
+<li><p><strong>AI Process</strong>: Maps business rules to OSLC query
+parameters.</p></li>
+<li><p><strong>Example Prompt</strong>: “Get approved work orders from
+BEDFORD site”</p></li>
+<li><p><strong>Example Output</strong>:</p>
+<pre class="http"><code>GET /maximo/api/os/mxwo?oslc.where=status=&quot;APPR&quot; and siteid=&quot;BEDFORD&quot;&amp;oslc.select=wonum,description&amp;lean=1</code></pre></li>
+</ul>
+<h3 id="b.-pythonnode.js-scripts">B. Python/Node.js Scripts</h3>
+<ul>
+<li><p><strong>Context</strong>: Backend automation, data migration,
+batch processing.</p></li>
+<li><p><strong>AI Process</strong>: Generates full scripts with
+authentication, error handling, and iteration logic.</p></li>
+<li><p><strong>Example Prompt</strong>: “Write a script to fetch all
+priority 1 work orders and print their descriptions”</p></li>
+<li><p><strong>Example Output</strong>:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">&quot;https://[YOUR_MAXIMO_HOST]/maximo/api/os/mxwo&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">&quot;apikey&quot;</span>: <span class="st">&quot;[YOUR_API_KEY]&quot;</span>}</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {<span class="st">&quot;oslc.where&quot;</span>: <span class="st">&quot;wopriority=1&quot;</span>, <span class="st">&quot;oslc.select&quot;</span>: <span class="st">&quot;wonum,description&quot;</span>, <span class="st">&quot;lean&quot;</span>: <span class="dv">1</span>}</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url, headers<span class="op">=</span>headers, params<span class="op">=</span>params)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> wo <span class="kw">in</span> response.json().get(<span class="st">&#39;member&#39;</span>, []):</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;</span><span class="sc">{</span>wo[<span class="st">&#39;wonum&#39;</span>]<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>wo<span class="sc">.</span>get(<span class="st">&#39;description&#39;</span>, <span class="st">&#39;N/A&#39;</span>)<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div></li>
+</ul>
+<h3 id="c.-sql-queries">C. SQL Queries</h3>
+<ul>
+<li><p><strong>Context</strong>: Direct database inspection, BIRT/Cognos
+reports, performance tuning.</p></li>
+<li><p><strong>AI Process</strong>: Translates the logical request into
+ANSI SQL.</p></li>
+<li><p><strong>Example Prompt</strong>: “Get overdue work
+orders”</p></li>
+<li><p><strong>Example Output</strong>:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> wonum, description, status, targcompdate</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> workorder</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> status <span class="kw">NOT</span> <span class="kw">IN</span> (<span class="st">&#39;COMP&#39;</span>, <span class="st">&#39;CLOSE&#39;</span>, <span class="st">&#39;CAN&#39;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> targcompdate <span class="op">&lt;</span> <span class="fu">CURRENT_DATE</span>;</span></code></pre></div></li>
+</ul>
+<hr />
+<h2 id="executing-tests-simulations-refinement-via-ai-interaction">6.
+Executing Tests, Simulations, &amp; Refinement via AI Interaction</h2>
+<p>The workflow extends beyond generation to include validation and
+refinement.</p>
+<h3 id="execution-test">6.1 Execution &amp; Test</h3>
+<ul>
+<li><strong>Immediate Validation</strong>: The AI can execute “Safe”
+operations (GET requests, SELECT queries) immediately.</li>
+<li><strong>Error Correction</strong>: If an API call fails (e.g., 400
+Bad Request), the AI analyzes the error and auto-corrects the
+query.</li>
+</ul>
+<h3 id="ui-simulation">6.2 UI Simulation</h3>
+<ul>
+<li><strong>Visual Verification</strong>: Instead of viewing raw JSON,
+the AI can render the data into a <strong>Carbon Design System</strong>
+table.</li>
+<li><strong>Benefit</strong>: Stakeholders can “see” the result of the
+API call in a user-friendly format.</li>
+</ul>
+<h3 id="conversational-refinement">6.3 Conversational Refinement</h3>
+<p>Users can refine output with follow-up prompts:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Turn</th>
+<th style="text-align: left;">User Prompt</th>
+<th style="text-align: left;">AI Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">“Get work orders”</td>
+<td style="text-align: left;">Generates basic query</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">“Add the reported date”</td>
+<td style="text-align: left;">Adds <code>reportdate</code> to
+<code>oslc.select</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">“Sort by newest first”</td>
+<td style="text-align: left;">Adds
+<code>oslc.orderBy="-reportdate"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">“Only show priority 1”</td>
+<td style="text-align: left;">Adds <code>wopriority=1</code> to
+<code>oslc.where</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="detailed-task-example">7. Detailed Task Example</h2>
+<h3 id="task-show-the-last-5-work-orders-with-status-in-progress">Task:
+“Show the last 5 work orders with status In Progress”</h3>
+<h4 id="step-1-user-request">Step 1: User Request</h4>
+<blockquote>
+<p>“Connect to Maximo and show me the last 5 work orders that are
+currently In Progress.”</p>
+</blockquote>
+<h4 id="step-2-context-analysis-ai">Step 2: Context Analysis (AI)</h4>
+<ul>
+<li><strong>Target Object</strong>: <code>MXWO</code> (Work Order)</li>
+<li><strong>Condition</strong>: <code>status</code> = ‘INPRG’</li>
+<li><strong>Sorting</strong>: By <code>statusdate</code> descending</li>
+<li><strong>Pagination</strong>: Limit to 5 records</li>
+</ul>
+<h4 id="step-3-generated-artifacts">Step 3: Generated Artifacts</h4>
+<p><strong>A. OSLC REST API Call</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> GET <span class="st">&quot;https://[YOUR_MAXIMO_HOST]/maximo/api/os/mxwo?oslc.where=status=%22INPRG%22&amp;oslc.orderBy=-statusdate&amp;oslc.pageSize=5&amp;lean=1&quot;</span> <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">-H</span> <span class="st">&quot;apikey: [YOUR_API_KEY]&quot;</span> <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span></span></code></pre></div>
+<p><strong>B. SQL Query</strong></p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> wonum, description, status, statusdate</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> workorder </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> status <span class="op">=</span> <span class="st">&#39;INPRG&#39;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> statusdate <span class="kw">DESC</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>FETCH <span class="fu">FIRST</span> <span class="dv">5</span> <span class="kw">ROWS</span> <span class="kw">ONLY</span>;</span></code></pre></div>
+<p><strong>C. Python Script</strong></p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">&quot;https://[YOUR_MAXIMO_HOST]/maximo/api/os/mxwo&quot;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">&quot;apikey&quot;</span>: <span class="st">&quot;[YOUR_API_KEY]&quot;</span>, <span class="st">&quot;Content-Type&quot;</span>: <span class="st">&quot;application/json&quot;</span>}</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;oslc.where&quot;</span>: <span class="st">&#39;status=&quot;INPRG&quot;&#39;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;oslc.orderBy&quot;</span>: <span class="st">&quot;-statusdate&quot;</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;oslc.pageSize&quot;</span>: <span class="st">&quot;5&quot;</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;lean&quot;</span>: <span class="st">&quot;1&quot;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url, headers<span class="op">=</span>headers, params<span class="op">=</span>params)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> response.status_code <span class="op">==</span> <span class="dv">200</span>:</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> wo <span class="kw">in</span> response.json().get(<span class="st">&#39;member&#39;</span>, []):</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;WO: </span><span class="sc">{</span>wo<span class="sc">.</span>get(<span class="st">&#39;wonum&#39;</span>)<span class="sc">}</span><span class="ss"> - </span><span class="sc">{</span>wo<span class="sc">.</span>get(<span class="st">&#39;description&#39;</span>)<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Error: </span><span class="sc">{</span>response<span class="sc">.</span>status_code<span class="sc">}</span><span class="ss"> - </span><span class="sc">{</span>response<span class="sc">.</span>text<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h4 id="step-4-execution-verification">Step 4: Execution &amp;
+Verification</h4>
+<p>The AI executes the command and can render the JSON result into a
+visual table.</p>
+<hr />
+<h2 id="common-errors-troubleshooting">8. Common Errors &amp;
+Troubleshooting</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Error</th>
+<th style="text-align: left;">Cause</th>
+<th style="text-align: left;">Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>400 Bad Request</code></td>
+<td style="text-align: left;">Invalid field name or syntax error in
+<code>oslc.where</code></td>
+<td style="text-align: left;">Verify field names against the schema.
+Check for unescaped quotes.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>401 Unauthorized</code></td>
+<td style="text-align: left;">Invalid or missing API Key</td>
+<td style="text-align: left;">Ensure <code>apikey</code> header is
+correct and has appropriate permissions.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>403 Forbidden</code></td>
+<td style="text-align: left;">API Key lacks permission for the Object
+Structure</td>
+<td style="text-align: left;">Request access from your Maximo
+administrator.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>404 Not Found</code></td>
+<td style="text-align: left;">Incorrect Object Structure name (e.g.,
+<code>mxwr</code> instead of <code>mxwo</code>)</td>
+<td style="text-align: left;">Verify the Object Structure name in
+Swagger.</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><code>500 Internal Server Error</code></td>
+<td style="text-align: left;">Server-side issue</td>
+<td style="text-align: left;">Check Maximo logs; may indicate a timeout
+or configuration problem.</td>
+</tr>
+<tr>
+<td style="text-align: left;">CORS Error (Browser)</td>
+<td style="text-align: left;">Browser blocking cross-origin
+requests</td>
+<td style="text-align: left;">Use a local proxy server (see Section
+10).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="building-a-custom-ui-application">9. Building a Custom UI
+Application</h2>
+<p>We can go beyond scripts by creating full-featured frontend
+applications.</p>
+<h3 id="overview">Overview</h3>
+<p>The file <code>index.html</code> serves as a template for turning raw
+JSON API responses into interactive dashboards.</p>
+<h3 id="ai-prompts-for-ui-generation">AI Prompts for UI Generation</h3>
+<p><strong>Prompt 1: Basic Structure</strong> &gt; “Create a single-file
+HTML application to visualize Maximo Work Order data. Use Tailwind CSS
+via CDN for styling and Vanilla JavaScript for logic.”</p>
+<p><strong>Prompt 2: Advanced Design</strong> &gt; “Enhance the design
+using a dark theme with glassmorphism effects. Implement a Master-Detail
+view where clicking a work order card on the left updates a detailed
+view panel on the right.”</p>
+<p><strong>Prompt 3: Refining Details</strong> &gt; “Add Lucide Icons
+for visual indicators. Include a search/filter input and pagination
+controls.”</p>
+<h3 id="carbon-design-system-example">Carbon Design System Example</h3>
+<p>For a native Maximo look and feel, use the IBM Carbon Design
+System.</p>
+<figure>
+<img src="WorkOrderCarbonAPI.png" alt="Carbon UI Example" />
+<figcaption aria-hidden="true">Carbon UI Example</figcaption>
+</figure>
+<hr />
+<h2 id="local-proxy-server-implementation">10. Local Proxy Server
+Implementation</h2>
+<p>To bypass CORS restrictions when connecting to the Maximo API from a
+browser, use a Node.js proxy server.</p>
+<h3 id="application-architecture">Application Architecture</h3>
+<ul>
+<li><strong><code>server.js</code></strong>: Express.js server that
+proxies <code>/maximo/*</code> to the actual Maximo host.</li>
+<li><strong><code>index.html</code></strong>: Frontend application
+fetching live data via the local proxy.</li>
+</ul>
+<h3 id="running-the-application">Running the Application</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Start the server</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> server.js</span></code></pre></div>
+<p>Open your browser to: <a
+href="http://localhost:3002/">http://localhost:3002/</a></p>
+<h3 id="interface-preview">Interface Preview</h3>
+<figure>
+<img src="MaxUIAPIv1.png" alt="Localhost Maximo App" />
+<figcaption aria-hidden="true">Localhost Maximo App</figcaption>
+</figure>
+<hr />
+<h2 id="security-best-practices">11. Security Best Practices</h2>
+<ul>
+<li><strong>Never hardcode API Keys</strong> in client-side JavaScript.
+Use environment variables or server-side proxies.</li>
+<li><strong>Use Read-Only Keys</strong> for development to prevent
+accidental data modification.</li>
+<li><strong>HTTPS Only</strong>: Always use HTTPS when communicating
+with the Maximo API.</li>
+<li><strong>Limit Scope</strong>: Request API Keys with access only to
+the Object Structures you need.</li>
+<li><strong>Rotate Keys</strong>: Periodically rotate API Keys and
+revoke unused ones.</li>
+</ul>
+<hr />
+<h2 id="archive-knowledge-retention">12. Archive &amp; Knowledge
+Retention</h2>
+<p>To ensure these workflows are reusable: 1. <strong>Save Successful
+Queries</strong>: Store working OSLC query strings in project
+documentation. 2. <strong>Update Examples</strong>: Add new use cases to
+your API Examples library. 3. <strong>Schema Cache</strong>: Keep a
+local copy of the OpenAPI definition for faster AI context loading.</p>
+</body>
+</html>

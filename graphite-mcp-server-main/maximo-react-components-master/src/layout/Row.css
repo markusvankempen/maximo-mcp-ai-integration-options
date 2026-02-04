@@ -1,0 +1,47 @@
+.row {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.row_ha_start {
+  justify-content: flex-start;
+}
+
+.row_ha_end {
+  justify-content: flex-end;
+}
+
+.row_ha_center {
+  justify-content: center;
+}
+
+.row_ha_space-between {
+  justify-content: space-between;
+}
+
+.row_va_top {
+  align-items: flex-start;
+}
+
+.row_va_center {
+  align-items: center;
+}
+
+.row_va_bottom {
+  align-items: flex-end;
+}
+
+.row_ov_scroll {
+  overflow-x: scroll;
+  flex-wrap: nowrap;
+}
+
+.row_ov_hidden {
+  overflow-x: hidden;
+  flex-wrap: nowrap;
+}

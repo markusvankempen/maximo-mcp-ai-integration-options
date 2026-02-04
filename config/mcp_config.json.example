@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "maximo": {
+      "command": "node",
+      "args": [
+        "/path/to/your/Maximo-MCP-EDF/maximo-mcp-server.js"
+      ],
+      "env": {
+        "MAXIMO_URL": "https://your-maximo-host.com/maximo/api",
+        "MAXIMO_API_KEY": "your-api-key-here"
+      },
+      "disabled": false
+    },
+    "graphite-mcp": {
+      "command": "node",
+      "args": [
+        "/path/to/your/Maximo-MCP-EDF/graphite-mcp-server-main/src/mcp-server.js",
+        "--stdio"
+      ],
+      "disabled": true,
+      "alwaysAllow": [
+        "graphite-list-components",
+        "graphite-show-component-samples",
+        "graphite-show-component-properties"
+      ]
+    }
+  }
+}

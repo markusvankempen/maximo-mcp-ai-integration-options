@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Maximo MCP Comprehensive Guide</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Maximo MCP Comprehensive Guide</h1>
+</header>
+<h1 id="maximo-mcp-comprehensive-guide-ai-driven-development">Maximo MCP
+Comprehensive Guide: AI-Driven Development</h1>
+<p><strong>Author:</strong> Markus van Kempen<br />
+<strong>Date:</strong> 3 Feb 2026</p>
+<hr />
+<h2 id="introduction">1. Introduction</h2>
+<p>This comprehensive guide details how to leverage the <strong>Maximo
+Model Context Protocol (MCP) Server</strong> to transform Maximo
+development. Unlike traditional methods that rely on static
+documentation, the MCP server empowers AI Assistants to actively
+interact with your Maximo environment, enabling schema introspection,
+live data querying, and intelligent code generation.</p>
+<h3 id="what-is-the-model-context-protocol-mcp">1.1 What is the Model
+Context Protocol (MCP)?</h3>
+<p>MCP is an open standard that allows AI models to communicate with
+external systems via a defined set of “tools.” In this context, the
+<code>maximo-mcp-server.js</code> acts as a bridge, exposing Maximo
+capabilities to any MCP-compatible AI IDE.</p>
+<h3 id="key-benefits">1.2 Key Benefits</h3>
+<ul>
+<li><strong>Automated Schema Knowledge</strong>: The AI no longer relies
+on generic training data. It <strong>introspects</strong> your specific
+Maximo configuration to understand available Object Structures and their
+fields.</li>
+<li><strong>Live Data Validation</strong>: Queries can be executed
+immediately to verify correctness, eliminating the “code-deploy-debug”
+cycle.</li>
+<li><strong>Multi-Format Code Generation</strong>: Generate OSLC API
+calls, Python scripts, or SQL queries from the same natural language
+request.</li>
+</ul>
+<h3 id="why-use-an-mcp-server-vs.-direct-approach">1.3 Why Use an MCP
+Server vs. Direct Approach?</h3>
+<p>You might wonder: “Why not just paste the Swagger documentation into
+the chat, or provide API examples directly?” Here’s why the MCP approach
+is superior:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Aspect</th>
+<th style="text-align: left;">Direct Approach (Manual Context)</th>
+<th style="text-align: left;">MCP Server Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Context Size</strong></td>
+<td style="text-align: left;">Limited by token window; large schemas get
+truncated</td>
+<td style="text-align: left;">Schema loaded server-side; AI queries
+specific parts on demand</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Data Freshness</strong></td>
+<td style="text-align: left;">Static; copy-pasted docs become stale</td>
+<td style="text-align: left;"><strong>Dynamic</strong>; always reflects
+current Maximo configuration</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Validation</strong></td>
+<td style="text-align: left;">AI guesses; errors found at runtime</td>
+<td style="text-align: left;">AI can <strong>test queries live</strong>
+and auto-correct before you see them</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Security</strong></td>
+<td style="text-align: left;">API keys may be pasted into chat
+(risky)</td>
+<td style="text-align: left;">Keys stored in local config; <strong>never
+sent to LLM provider</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Effort</strong></td>
+<td style="text-align: left;">Manual copy/paste for every session</td>
+<td style="text-align: left;"><strong>Zero effort</strong> after initial
+setup; context is automatic</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Consistency</strong></td>
+<td style="text-align: left;">Varies by what you remember to
+include</td>
+<td style="text-align: left;">Standardized tool interface; same
+capabilities every time</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example: Finding the right field name</strong></p>
+<ul>
+<li><strong>Direct Approach</strong>: You paste a 500-line schema
+excerpt and ask “What’s the field for work order priority?” The AI scans
+the text and <em>hopes</em> it’s complete.</li>
+<li><strong>MCP Approach</strong>: The AI calls
+<code>get_schema_details(objectStructure: "MXWO")</code>, receives the
+authoritative field list directly from the OpenAPI spec, and responds
+with <code>wopriority</code> — guaranteed correct.</li>
+</ul>
+<p><strong>Bottom Line</strong>: The MCP server transforms the AI from a
+“smart guesser” into a “connected assistant” with direct access to your
+Maximo environment.</p>
+<hr />
+<h2 id="prerequisites-installation">2. Prerequisites &amp;
+Installation</h2>
+<h3 id="prerequisites">2.1 Prerequisites</h3>
+<p>Before configuring the MCP server, ensure the following are in place:
+* <strong>Node.js</strong>: Version 18 or higher installed locally
+(<code>node --version</code>). * <strong>Maximo API Key</strong>: A
+valid API key with at least read-only access to the desired Object
+Structures (e.g., <code>MXWO</code>, <code>MXASSET</code>). *
+<strong>OpenAPI Schema (Recommended)</strong>: A local
+<code>maximo_openapi.json</code> file for faster schema lookups.</p>
+<h3 id="installing-dependencies">2.2 Installing Dependencies</h3>
+<p>Navigate to the project directory and install the required Node.js
+packages:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/Maximo-MCP-EDF</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span></code></pre></div>
+<p>The <code>maximo-mcp-server.js</code> requires the following packages
+(defined in <code>package.json</code>): *
+<code>@modelcontextprotocol/sdk</code> — The MCP SDK for Node.js *
+<code>zod</code> — Schema validation library</p>
+<hr />
+<h2 id="configuring-the-mcp-server-in-your-ide">3. Configuring the MCP
+Server in Your IDE</h2>
+<h3 id="configuration-for-antigravity-google">3.1 Configuration for
+Antigravity (Google)</h3>
+<p>Antigravity uses a settings file located in your project’s
+<code>.gemini</code> directory.</p>
+<p><strong>Step 1: Create the settings file</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .gemini</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> .gemini/settings.json</span></code></pre></div>
+<p><strong>Step 2: Add the MCP configuration</strong></p>
+<p>Edit <code>.gemini/settings.json</code> and add:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;maximo&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;node&quot;</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;env&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_URL&quot;</span><span class="fu">:</span> <span class="st">&quot;https://[YOUR_MAXIMO_HOST]/maximo/api&quot;</span><span class="fu">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_API_KEY&quot;</span><span class="fu">:</span> <span class="st">&quot;[YOUR_API_KEY]&quot;</span><span class="fu">,</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_OPENAPI_PATH&quot;</span><span class="fu">:</span> <span class="st">&quot;/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json&quot;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Step 3: Restart Antigravity</strong></p>
+<p>Close and reopen your Antigravity session. The MCP server will be
+available as “maximo” in your tools list.</p>
+<hr />
+<h3 id="configuration-for-cursor">3.2 Configuration for Cursor</h3>
+<p>Cursor uses a global MCP configuration file.</p>
+<p><strong>Step 1: Locate the settings file</strong> *
+<strong>macOS</strong>: <code>~/.cursor/mcp.json</code> *
+<strong>Windows</strong>: <code>%USERPROFILE%\.cursor\mcp.json</code> *
+<strong>Linux</strong>: <code>~/.cursor/mcp.json</code></p>
+<p><strong>Step 2: Create or edit the file</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS/Linux</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/.cursor</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> ~/.cursor/mcp.json</span></code></pre></div>
+<p><strong>Step 3: Add the MCP configuration</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;maximo&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;node&quot;</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;env&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_URL&quot;</span><span class="fu">:</span> <span class="st">&quot;https://[YOUR_MAXIMO_HOST]/maximo/api&quot;</span><span class="fu">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_API_KEY&quot;</span><span class="fu">:</span> <span class="st">&quot;[YOUR_API_KEY]&quot;</span><span class="fu">,</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_OPENAPI_PATH&quot;</span><span class="fu">:</span> <span class="st">&quot;/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Step 4: Restart Cursor</strong></p>
+<p>Restart Cursor for the changes to take effect.</p>
+<hr />
+<h3 id="configuration-for-vs-code-with-copilotcontinue">3.3
+Configuration for VS Code (with Copilot/Continue)</h3>
+<p>For VS Code with MCP-compatible extensions like
+<strong>Continue</strong>, use the extension’s settings.</p>
+<p><strong>Step 1: Open VS Code Settings</strong></p>
+<p>Press <code>Cmd+Shift+P</code> (macOS) or <code>Ctrl+Shift+P</code>
+(Windows/Linux) and search for “Continue: Open Settings”.</p>
+<p><strong>Step 2: Add MCP Server Configuration</strong></p>
+<p>In the Continue configuration file
+(<code>~/.continue/config.json</code>), add:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;maximo&quot;</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;node&quot;</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;env&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_URL&quot;</span><span class="fu">:</span> <span class="st">&quot;https://[YOUR_MAXIMO_HOST]/maximo/api&quot;</span><span class="fu">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_API_KEY&quot;</span><span class="fu">:</span> <span class="st">&quot;[YOUR_API_KEY]&quot;</span><span class="fu">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;MAXIMO_OPENAPI_PATH&quot;</span><span class="fu">:</span> <span class="st">&quot;/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json&quot;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h3 id="environment-variables-reference">3.4 Environment Variables
+Reference</h3>
+<p>The <code>maximo-mcp-server.js</code> reads the following environment
+variables:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Required</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>MAXIMO_URL</code></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Base URL for the Maximo REST API</td>
+<td
+style="text-align: left;"><code>https://poc.manage.edf-rba.ssw-demos.com/maximo/api</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>MAXIMO_API_KEY</code></td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">API Key for authentication</td>
+<td style="text-align: left;">(embedded default)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>MAXIMO_OPENAPI_PATH</code></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Path to local OpenAPI schema file</td>
+<td style="text-align: left;"><code>./maximo_openapi.json</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="verifying-the-setup">3.5 Verifying the Setup</h3>
+<p>After configuration, verify the MCP server is working:</p>
+<p><strong>Method 1: Ask the AI</strong> &gt; “Is the Maximo MCP server
+connected?”</p>
+<p>The AI should respond by calling <code>get_instance_details</code>
+and confirming connectivity.</p>
+<p><strong>Method 2: Run Manually</strong></p>
+<p>Test the server directly from the command line:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> /path/to/Maximo-MCP-EDF/maximo-mcp-server.js</span></code></pre></div>
+<p>You should see output like:</p>
+<pre><code>Loading OpenAPI spec from /path/to/maximo_openapi.json...
+Loaded OpenAPI spec. Components: 1247
+Maximo MCP Server running on stdio</code></pre>
+<figure>
+<img src="MCPConfig.png" alt="MCP Configuration" />
+<figcaption aria-hidden="true">MCP Configuration</figcaption>
+</figure>
+<blockquote>
+<p><strong>Key Benefit</strong>: Once configured, the MCP setup
+automatically handles <strong>Schema Knowledge</strong> and <strong>API
+Connectivity</strong>. You do not need to manually feed the AI Swagger
+files or API documentation; the MCP server proactively retrieves this
+context for every request.</p>
+</blockquote>
+<hr />
+<h2 id="available-mcp-tools">4. Available MCP Tools</h2>
+<p>The Maximo MCP Server exposes the following tools to the AI
+agent:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Tool Name</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Example Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>list_object_structures</code></td>
+<td style="text-align: left;">Searches the available Maximo APIs by name
+or description.</td>
+<td style="text-align: left;">“What APIs are available for Assets?”</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>get_schema_details</code></td>
+<td style="text-align: left;">Retrieves detailed field definitions
+(type, length, title) for a specific Object Structure.</td>
+<td style="text-align: left;">“What fields are on the MXWO object?”</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>query_maximo</code></td>
+<td style="text-align: left;">Executes a live OSLC REST query against
+the Maximo instance.</td>
+<td style="text-align: left;">“Get the last 5 approved work
+orders.”</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>get_instance_details</code></td>
+<td style="text-align: left;">Checks server connectivity and retrieves
+meta-information like latest work order date.</td>
+<td style="text-align: left;">“Is the Maximo server reachable?”</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>render_carbon_table</code></td>
+<td style="text-align: left;">Generates an interactive HTML table
+(Carbon Design System) from query results.</td>
+<td style="text-align: left;">“Show me a table of open work
+orders.”</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>render_carbon_details</code></td>
+<td style="text-align: left;">Generates a detailed HTML view for a
+single record.</td>
+<td style="text-align: left;">“Show me the details for work order
+1001.”</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="code-generation-from-natural-language">5. Code Generation from
+Natural Language</h2>
+<p>The MCP server acts as the “eyes and ears” of the AI, allowing it to
+translate vague natural language into precise technical operations by
+inspecting the actual Maximo configuration.</p>
+<h3 id="the-workflow">4.1 The Workflow</h3>
+<ol type="1">
+<li><strong>User Request</strong>: “Find all pumps that failed last
+month.”</li>
+<li><strong>Schema Discovery</strong>: The AI calls
+<code>list_object_structures</code> to find relevant APIs (e.g.,
+<code>MXASSET</code>, <code>MXWO</code>).</li>
+<li><strong>Field Mapping</strong>: It calls
+<code>get_schema_details</code> to understand the data structure (e.g.,
+confirming <code>assetnum</code>, <code>description</code>,
+<code>failurecode</code>).</li>
+<li><strong>Code Generation</strong>: It generates the correct query or
+code block.</li>
+</ol>
+<h3 id="the-ai-assisted-interface">4.2 The AI-Assisted Interface</h3>
+<p>The AI doesn’t just guess; it <strong>verifies</strong>. By having
+access to the live schema, the AI Interface can: *
+<strong>Autocomplete</strong> field names based on the actual object
+structure. * <strong>Validate</strong> that a specific relationship
+exists before suggesting it. * <strong>Contextualize</strong> answers,
+distinguishing between a “Work Order” (<code>MXWO</code>) and a “Service
+Request” (<code>MXSR</code>).</p>
+<figure>
+<img src="Antigravity-Cursor-VSCode.png" alt="AI IDE Interface" />
+<figcaption aria-hidden="true">AI IDE Interface</figcaption>
+</figure>
+<hr />
+<h2 id="generating-multi-format-code-scripts-sql-api">6. Generating
+Multi-Format Code (Scripts, SQL, API)</h2>
+<p>One of the most powerful features of the MCP integration is the
+ability to generate <strong>context-aware code</strong> in multiple
+formats, ensuring alignment with the Target Data Structure.</p>
+<h3 id="a.-oslc-rest-api-calls">A. OSLC REST API Calls</h3>
+<ul>
+<li><p><strong>Context</strong>: Web Apps, Integrations
+(Postman/Curl).</p></li>
+<li><p><strong>Process</strong>: The AI checks
+<code>get_schema_details</code> to identify the correct OSLC query
+parameters.</p></li>
+<li><p><strong>Example Prompt</strong>: “Get approved work orders with
+their asset numbers.”</p></li>
+<li><p><strong>Example Output</strong>:</p>
+<pre class="http"><code>GET /maximo/api/os/mxwo?oslc.where=status=&quot;APPR&quot;&amp;oslc.select=wonum,description,assetnum,reportdate&amp;lean=1</code></pre></li>
+</ul>
+<h3 id="b.-pythonnode.js-scripts">B. Python/Node.js Scripts</h3>
+<ul>
+<li><p><strong>Context</strong>: Automation, Data Migration, Batch
+Processing.</p></li>
+<li><p><strong>Process</strong>: The AI constructs robust scripts using
+libraries like <code>requests</code> or <code>axios</code>, injecting
+the correct field names and error handling logic derived from the
+schema.</p></li>
+<li><p><strong>Example Prompt</strong>: “Write a Python script to fetch
+all work orders from this year and export them to CSV.”</p></li>
+<li><p><strong>Example Output</strong> (Python):</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> csv</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>MAXIMO_URL <span class="op">=</span> <span class="st">&quot;https://your-host/maximo/api/os/mxwo&quot;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">&quot;apikey&quot;</span>: <span class="st">&quot;YOUR_API_KEY&quot;</span>}</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># AI knows &#39;reportdate&#39; is the correct field from schema introspection</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;oslc.where&#39;</span>: <span class="st">&#39;reportdate&gt;=&quot;2026-01-01&quot;&#39;</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;oslc.select&#39;</span>: <span class="st">&#39;wonum,description,status,reportdate&#39;</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;lean&#39;</span>: <span class="dv">1</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(MAXIMO_URL, params<span class="op">=</span>params, headers<span class="op">=</span>headers)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> response.json().get(<span class="st">&#39;member&#39;</span>, [])</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;work_orders.csv&#39;</span>, <span class="st">&#39;w&#39;</span>, newline<span class="op">=</span><span class="st">&#39;&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    writer <span class="op">=</span> csv.DictWriter(f, fieldnames<span class="op">=</span>[<span class="st">&#39;wonum&#39;</span>, <span class="st">&#39;description&#39;</span>, <span class="st">&#39;status&#39;</span>, <span class="st">&#39;reportdate&#39;</span>])</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    writer.writeheader()</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    writer.writerows(data)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Exported </span><span class="sc">{</span><span class="bu">len</span>(data)<span class="sc">}</span><span class="ss"> work orders.&quot;</span>)</span></code></pre></div></li>
+</ul>
+<h3 id="c.-sql-queries">C. SQL Queries</h3>
+<ul>
+<li><p><strong>Context</strong>: Analytics, BIRT Reports, Database
+Administration.</p></li>
+<li><p><strong>Process</strong>: By understanding the underlying Object
+Structure capabilities, the AI can infer the database schema and
+generate ANSI SQL.</p></li>
+<li><p><strong>Example Prompt</strong>: “Write SQL to find overdue work
+orders.”</p></li>
+<li><p><strong>Example Output</strong>:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- AI infers table names from Object Structure backing tables</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> wonum, description, status, targcompdate</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> workorder </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> status <span class="kw">NOT</span> <span class="kw">IN</span> (<span class="st">&#39;COMP&#39;</span>, <span class="st">&#39;CLOSE&#39;</span>, <span class="st">&#39;CAN&#39;</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> targcompdate <span class="op">&lt;</span> <span class="fu">CURRENT_DATE</span>;</span></code></pre></div></li>
+</ul>
+<hr />
+<h2 id="execution-simulation-refinement">7. Execution, Simulation, &amp;
+Refinement</h2>
+<p>The MCP server bridges the gap between <em>writing</em> code and
+<em>running</em> it. It allows for an interactive loop of execution,
+visualization, and refinement.</p>
+<h3 id="execution-test">6.1 Execution &amp; Test</h3>
+<ul>
+<li><strong>Tool</strong>: <code>query_maximo</code></li>
+<li><strong>Action</strong>: The AI can execute the generated query
+immediately to verify it returns results.</li>
+<li><strong>Benefit</strong>: “Fail Fast.” If the query returns a 400
+error (e.g., invalid field), the AI sees the error message and
+auto-corrects the code <em>before</em> showing it to you.</li>
+</ul>
+<h3 id="simulation-ui-generation">6.2 Simulation (UI Generation)</h3>
+<ul>
+<li><strong>Tool</strong>: <code>render_carbon_table</code> /
+<code>render_carbon_details</code></li>
+<li><strong>Action</strong>: Instead of showing raw JSON, the AI renders
+the data into a <strong>Carbon Design System</strong> HTML table with
+sorting and filtering.</li>
+<li><strong>Benefit</strong>: Stakeholders can visually inspect the data
+structure and content quality (e.g., “Oh, the description field is empty
+for these records”) without needing a deployed frontend.</li>
+</ul>
+<figure>
+<img src="WorkOrderCarbonAPI.png" alt="Carbon UI Example" />
+<figcaption aria-hidden="true">Carbon UI Example</figcaption>
+</figure>
+<h3 id="conversational-refinement">6.3 Conversational Refinement</h3>
+<p>Because the AI has context, you can refine the output
+conversationally:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Turn</th>
+<th style="text-align: left;">User Prompt</th>
+<th style="text-align: left;">AI Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">“Get me the work orders.”</td>
+<td style="text-align: left;">Calls <code>query_maximo</code> and shows
+a list.</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">“It’s too messy. Sort by newest
+first.”</td>
+<td style="text-align: left;">Adds
+<code>oslc.orderBy="-reportdate"</code>. Re-runs query.</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">“Add the site ID column.”</td>
+<td style="text-align: left;">Checks schema, finds <code>siteid</code>,
+adds to <code>oslc.select</code>. Updates table.</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">“Filter only for BEDFORD site.”</td>
+<td style="text-align: left;">Adds <code>siteid="BEDFORD"</code> to
+<code>oslc.where</code>. Re-runs.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="real-world-walkthrough-creating-a-custom-dashboard">8.
+Real-World Walkthrough: Creating a Custom Dashboard</h2>
+<p>Let’s walk through a typical use case from start to finish.</p>
+<p><strong>Goal</strong>: Build a simple HTML dashboard showing the last
+10 high-priority work orders.</p>
+<h3 id="step-1-discover-the-api">Step 1: Discover the API</h3>
+<blockquote>
+<p><strong>User</strong>: “What’s the API for work orders?”</p>
+</blockquote>
+<p><strong>AI</strong>: Calls
+<code>list_object_structures(filter: "work order")</code> and responds:
+&gt; “The primary Object Structure for Work Orders is
+<strong>MXWO</strong>.”</p>
+<h3 id="step-2-understand-the-schema">Step 2: Understand the Schema</h3>
+<blockquote>
+<p><strong>User</strong>: “What fields are available on MXWO for
+priority and dates?”</p>
+</blockquote>
+<p><strong>AI</strong>: Calls
+<code>get_schema_details(objectStructure: "MXWO")</code> and responds:
+&gt; “Key fields include: <code>wopriority</code> (integer),
+<code>reportdate</code> (datetime), <code>targstartdate</code>
+(datetime), <code>status</code> (string).”</p>
+<h3 id="step-3-query-live-data">Step 3: Query Live Data</h3>
+<blockquote>
+<p><strong>User</strong>: “Show me the top 10 priority 1 work orders,
+sorted by report date.”</p>
+</blockquote>
+<p><strong>AI</strong>: Calls <code>query_maximo</code> with the
+constructed query and displays the results.</p>
+<h3 id="step-4-generate-the-ui">Step 4: Generate the UI</h3>
+<blockquote>
+<p><strong>User</strong>: “Now build me a dark-themed HTML page to
+display this data.”</p>
+</blockquote>
+<p><strong>AI</strong>: Generates a complete <code>index.html</code>
+file using Tailwind CSS with dark mode, fetching from the Maximo API via
+the local proxy server.</p>
+<hr />
+<h2 id="security-best-practices">9. Security &amp; Best Practices</h2>
+<ul>
+<li><strong>Local Execution</strong>: The MCP server runs locally on
+your machine. Your API Key is stored in your local configuration and is
+not sent to the LLM provider’s servers; only the <em>results</em> of the
+queries are.</li>
+<li><strong>Read-Only Access</strong>: For development, it is
+recommended to use an API Key with limited permissions (e.g., Read-Only)
+to prevent accidental data modification during AI experimentation.</li>
+<li><strong>Schema Caching</strong>: The server uses a local
+<code>maximo_openapi.json</code> to speed up schema lookups and reduce
+load on the Maximo server.</li>
+<li><strong>Environment Variables</strong>: Never hardcode API keys. Use
+environment variables in the MCP config as shown.</li>
+</ul>
+<hr />
+<h2 id="summary">10. Summary</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Without MCP</th>
+<th style="text-align: left;">With Maximo MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Knowledge</strong></td>
+<td style="text-align: left;">Static (Training Data cut-off)</td>
+<td style="text-align: left;"><strong>Dynamic (Live Schema
+Access)</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Validation</strong></td>
+<td style="text-align: left;">Guess &amp; Check</td>
+<td style="text-align: left;"><strong>Introspect &amp;
+Verify</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Output</strong></td>
+<td style="text-align: left;">Code Snippets</td>
+<td style="text-align: left;"><strong>Executed Queries &amp; Visual
+UIs</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Refinement</strong></td>
+<td style="text-align: left;">Manual debugging</td>
+<td style="text-align: left;"><strong>Conversational
+Auto-correction</strong></td>
+</tr>
+</tbody>
+</table>
+<p>This workflow transforms the IDE from a text editor into a
+<strong>Maximo command center</strong>, reducing development time and
+errors significantly.</p>
+</body>
+</html>

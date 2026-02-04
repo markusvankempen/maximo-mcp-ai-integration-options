@@ -1,0 +1,54 @@
+{
+  "name": "graphite-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP (Model-Code-Prompt) server for AI assistants",
+  "main": "src/mcp-server.js",
+  "type": "module",
+  "bin": {
+    "mcp-server": "./src/mcp-server.js"
+  },
+  "scripts": {
+    "start": "node src/mcp-server.js --http --rag",
+    "start:norag": "node src/mcp-server.js --http",
+    "dev": "node src/mcp-server.js --http",
+    "dev:watch": "nodemon --exec node src/mcp-server.js --http",
+    "inspect": "npx @modelcontextprotocol/inspector node src/mcp-server.js --http",
+    "stdio": "node src/mcp-server.js --stdio --rag",
+    "stdio:rag": "node src/mcp-server.js --stdio --rag --rag-host 9.30.231.84",
+    "test-http": "node src/mcp-server.js --http --port 6868 --rag & sleep 2 && node test-mcp.js; pkill -f 'node src/mcp-server.js --http --rag'",
+    "test-stdio": "node test-mcp-stdio.js",
+    "test": "npm run test-stdio && npm run test-http"
+  },
+  "keywords": [
+    "mcp",
+    "ai",
+    "assistant",
+    "tools"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.20.2",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-slow-down": "^3.0.0",
+    "fs-extra": "^11.1.1",
+    "mobx": "6.13.7",
+    "mobx-react": "9.2.0",
+    "node-fetch": "^3.3.2",
+    "react": "18.3.1",
+    "react-app-polyfill": "3.0.0",
+    "react-dom": "18.3.1",
+    "yargs": "^17.7.2",
+    "zod": "^3.22.4",
+    "shx": "^0.4.0",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "glob": "^11.0.3",
+    "jsdoc": "4.0.5",
+    "nodemon": "^3.0.1"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
