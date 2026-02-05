@@ -29,8 +29,8 @@ build/
 tmp/
 temp/
 
-# Local OpenAPI schema (optional - may contain sensitive info)
-# maximo_openapi.json
+# Local OpenAPI schema (user-specific - download from your Maximo instance)
+maximo_openapi.json
 
 # Gemini/Antigravity cache
 .gemini/

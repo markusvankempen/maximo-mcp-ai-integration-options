@@ -8,13 +8,13 @@
 [![MCP](https://img.shields.io/badge/MCP-Protocol-5A29E4?style=for-the-badge)](https://modelcontextprotocol.io/)
 [![Maximo](https://img.shields.io/badge/IBM-Maximo-052FAD?style=for-the-badge&logo=ibm&logoColor=white)](https://www.ibm.com/products/maximo)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-v1.0.0-blue?style=for-the-badge)](package.json)
+[![Version](https://img.shields.io/badge/Version-v1.0.2-blue?style=for-the-badge)](package.json)
 
 *Transform your Maximo development workflow with AI-driven schema discovery, live data querying, and intelligent code generation.*
 
 **Author:** Markus van Kempen  
 **Email:** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
-**Date:** 3 February 2026
+**Date:** 5 February 2026
 
 [Getting Started](#-quick-start) • [Documentation](#-documentation) • [Live Demo](#-live-demo) • [Use Cases](#-use-cases)
 
@@ -122,26 +122,50 @@ Alternatively, download via Swagger UI at: `https://your-host/maximo/oslc/oas/ap
 
 ### IDE Configuration
 
-Copy and configure the MCP settings for your IDE:
+#### Google Antigravity (Manual Setup Required)
 
-**For Cursor:**
-```bash
-cp config/mcp_config.json.example ~/.cursor/mcp.json
-```
+> ⚠️ **Note:** The Antigravity MCP Store is curated and does not auto-discover servers from the registry. You must add this server manually.
 
-**For Antigravity:**
-```bash
-mkdir -p .gemini && cp config/mcp_config.json.example .gemini/settings.json
-```
-
-Edit the config file and update the path to `maximo-mcp-server.js`:
+1. Open Antigravity
+2. Click "**...**" dropdown at the top of the Agent panel
+3. Select "**MCP Servers**" → "**Manage MCP Servers**" → "**View raw config**"
+4. Add to your `mcp_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "maximo": {
-      "command": "node",
-      "args": ["/absolute/path/to/maximo-mcp-server.js"],
+    "maximo-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
+      "env": {
+        "MAXIMO_URL": "https://your-maximo-host/maximo/api",
+        "MAXIMO_API_KEY": "your-api-key-here",
+        "MAXIMO_HOST": "https://your-maximo-host"
+      }
+    }
+  }
+}
+```
+
+5. Save and click **Refresh**
+
+#### Cursor / Claude Desktop
+
+```bash
+# Copy the template
+cp config/mcp_config.json.example ~/.cursor/mcp.json
+# Or for Claude Desktop:
+cp config/mcp_config.json.example ~/Library/Application\ Support/Claude/claude_desktop_config.json
+```
+
+Edit with your Maximo credentials:
+
+```json
+{
+  "mcpServers": {
+    "maximo-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
       "env": {
         "MAXIMO_URL": "https://your-maximo-host/maximo/api",
         "MAXIMO_API_KEY": "your-api-key-here"
@@ -276,7 +300,7 @@ See the [Asset Manager Case Study](docs/Asset_Manager_App_Case_Study.md) for the
 ## 📁 Project Structure
 
 ```
-Maximo-MCP-EDF/
+Maximo-MCP/
 ├── maximo-mcp-server.js       # 🔌 MCP Server implementation
 ├── server.js                  # 🌐 Local proxy server for CORS
 ├── package.json               # 📦 Dependencies

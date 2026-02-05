@@ -13,7 +13,8 @@
  */
 
 // Load environment variables from .env file
-require('dotenv').config();
+// IMPORTANT: quiet:true prevents dotenv from outputting to stdout, which would corrupt MCP stdio
+require('dotenv').config({ quiet: true });
 
 const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
 const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");

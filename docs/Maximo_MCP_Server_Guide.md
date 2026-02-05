@@ -2,7 +2,7 @@
 
 **Author:** Markus van Kempen  
 **Email:** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
-**Date:** 3 Feb 2026
+**Date:** 5 Feb 2026
 
 ---
 
@@ -53,7 +53,7 @@ Before configuring the MCP server, ensure the following are in place:
 Navigate to the project directory and install the required Node.js packages:
 
 ```bash
-cd /path/to/Maximo-MCP-EDF
+cd /path/to/Maximo-MCP
 
 # Install dependencies
 npm install
@@ -272,7 +272,7 @@ The AI should respond by calling `get_instance_details` and confirming connectiv
 Test the server directly from the command line:
 
 ```bash
-node /path/to/Maximo-MCP-EDF/maximo-mcp-server.js
+node /path/to/Maximo-MCP/maximo-mcp-server.js
 ```
 
 You should see output like:

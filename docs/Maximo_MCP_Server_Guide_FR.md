@@ -2,7 +2,7 @@
 
 **Auteur :** Markus van Kempen  
 **Courriel :** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
-**Date :** 3 février 2026
+**Date :** 5 février 2026
 
 ---
 
@@ -53,7 +53,7 @@ Avant de configurer le serveur MCP, assurez-vous que les éléments suivants son
 Naviguez vers le répertoire du projet et installez les packages Node.js requis :
 
 ```bash
-cd /chemin/vers/Maximo-MCP-EDF
+cd /chemin/vers/Maximo-MCP
 
 # Installer les dépendances
 npm install
@@ -85,14 +85,12 @@ touch .gemini/settings.json
 {
   "mcpServers": {
     "maximo": {
-      "command": "node",
-      "args": [
-        "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js"
-      ],
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
       "env": {
         "MAXIMO_URL": "https://[VOTRE_HÔTE_MAXIMO]/maximo/api",
         "MAXIMO_API_KEY": "[VOTRE_CLÉ_API]",
-        "MAXIMO_OPENAPI_PATH": "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json"
+        "MAXIMO_OPENAPI_PATH": "/chemin/vers/maximo_openapi.json"
       }
     }
   }
@@ -128,14 +126,12 @@ nano ~/.cursor/mcp.json
 {
   "mcpServers": {
     "maximo": {
-      "command": "node",
-      "args": [
-        "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js"
-      ],
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
       "env": {
         "MAXIMO_URL": "https://[VOTRE_HÔTE_MAXIMO]/maximo/api",
         "MAXIMO_API_KEY": "[VOTRE_CLÉ_API]",
-        "MAXIMO_OPENAPI_PATH": "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json"
+        "MAXIMO_OPENAPI_PATH": "/chemin/vers/maximo_openapi.json"
       }
     }
   }
@@ -165,12 +161,12 @@ Dans le fichier de configuration Continue (`~/.continue/config.json`), ajoutez :
   "mcpServers": [
     {
       "name": "maximo",
-      "command": "node",
-      "args": ["/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo-mcp-server.js"],
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
       "env": {
         "MAXIMO_URL": "https://[VOTRE_HÔTE_MAXIMO]/maximo/api",
         "MAXIMO_API_KEY": "[VOTRE_CLÉ_API]",
-        "MAXIMO_OPENAPI_PATH": "/Users/markusvankempen/projects/Maximo-MCP-EDF/maximo_openapi.json"
+        "MAXIMO_OPENAPI_PATH": "/chemin/vers/maximo_openapi.json"
       }
     }
   ]
@@ -205,7 +201,7 @@ L'IA devrait répondre en appelant `get_instance_details` et en confirmant la co
 Testez le serveur directement depuis la ligne de commande :
 
 ```bash
-node /chemin/vers/Maximo-MCP-EDF/maximo-mcp-server.js
+npx maximo-mcp-server
 ```
 
 Vous devriez voir une sortie comme :

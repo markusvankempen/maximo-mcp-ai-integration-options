@@ -23,8 +23,8 @@ We use `mise` (or standard Node managers) to ensure a consistent environment.
 
 1.  **Fork and Clone**
     ```bash
-    git clone https://github.com/your-username/Maximo-MCP-EDF.git
-    cd Maximo-MCP-EDF
+    git clone https://github.com/your-username/Maximo-MCP.git
+    cd Maximo-MCP
     ```
 
 2.  **Install Dependencies**

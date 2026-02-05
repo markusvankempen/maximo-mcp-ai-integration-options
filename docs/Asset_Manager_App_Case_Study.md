@@ -2,7 +2,7 @@
 
 **Author:** Markus van Kempen  
 **Email:** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
-**Date:** 3 February 2026  
+**Date:** 5 February 2026  
 **Application:** Maximo Asset Manager  
 **Technology:** Maximo MCP Server + AI-Assisted Development
 
@@ -363,7 +363,7 @@ A complete video demonstration of the application workflow has been captured:
 ### 6.1 File Structure
 
 ```
-Maximo-MCP-EDF/
+Maximo-MCP/
 ├── maximo-mcp-server.js         # MCP Server implementation
 ├── server.js                    # Local proxy server
 ├── demos/
