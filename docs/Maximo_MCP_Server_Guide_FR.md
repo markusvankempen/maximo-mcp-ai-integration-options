@@ -47,6 +47,7 @@ Avant de configurer le serveur MCP, assurez-vous que les éléments suivants son
 *   **Node.js** : Version 18 ou supérieure installée localement (`node --version`).
 *   **Clé API Maximo** : Une clé API valide avec au moins un accès en lecture seule aux Structures d'Objets souhaitées (par ex., `MXWO`, `MXASSET`).
 *   **Schéma OpenAPI (Recommandé)** : Un fichier local `maximo_openapi.json` pour des recherches de schéma plus rapides.
+    *   *Téléchargement Manuel* : Ouvrez `https://[VOTRE_HÔTE]/maximo/oslc/oas/api` dans votre navigateur, puis faites "Enregistrer sous" pour sauvegarder le JSON.
 
 ### 2.2 Installation des Dépendances
 

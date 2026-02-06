@@ -113,14 +113,23 @@ curl -X GET "https://[YOUR_MAXIMO_HOST]/maximo/oslc/oas/api" \
      -o maximo_openapi.json
 ```
 
-**Method 3: Via Authenticated URL**
+**Method 3: Via Direct Browser URL (Manual)**
 
-Open this URL in your browser while authenticated to Maximo:
-```
-https://[YOUR_MAXIMO_HOST]/maximo/oslc/oas/api
-```
+If the other methods fail (e.g., due to network restrictions), you can manually download the file:
 
-Right-click and "Save As" → `maximo_openapi.json`
+1.  Open the API URL in your browser:
+    ```
+    https://[YOUR_MAXIMO_HOST]/maximo/oslc/oas/api
+    ```
+    *(Replace `[YOUR_MAXIMO_HOST]` with your server address, e.g., `https://maximo.example.com`)*
+
+2.  If prompted, log in to Maximo.
+
+3.  Wait for the large JSON content to load.
+
+4.  Right-click anywhere on the page and select **"Save Page As..."** (or use `Ctrl+S` / `Cmd+S`).
+
+5.  Save the file as `maximo_openapi.json` in your project folder.
 
 #### File Size Note
 

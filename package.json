@@ -4,6 +4,7 @@
   "mcpName": "io.github.markusvankempen/maximo-mcp-server",
   "description": "Model Context Protocol (MCP) server for IBM Maximo",
   "main": "maximo-mcp-server.js",
+  "module": "./maximo-mcp-server.js",
   "bin": {
     "maximo-mcp-server": "./maximo-mcp-server.js"
   },

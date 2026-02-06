@@ -590,3 +590,11 @@ run().catch((error) => {
     console.error("Fatal error running server:", error);
     process.exit(1);
 });
+
+// --- Smithery Sandbox Server Export ---
+// This allows Smithery to scan server capabilities without real credentials
+function createSandboxServer() {
+    return server;
+}
+
+module.exports = { createSandboxServer };

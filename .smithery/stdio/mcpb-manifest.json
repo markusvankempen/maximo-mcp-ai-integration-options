@@ -1,0 +1,56 @@
+{
+  "manifest_version": "0.2",
+  "name": "maximo-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server",
+  "author": {
+    "name": "mvankempen"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "index.cjs",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/index.cjs"
+      ],
+      "env": {}
+    }
+  },
+  "tools": [
+    {
+      "name": "list_object_structures",
+      "description": "List available Maximo Object Structures (APIs) from the schema, with optional filtering."
+    },
+    {
+      "name": "get_schema_details",
+      "description": "Get the detailed field definitions (properties, types) for a specific Maximo Object Structure."
+    },
+    {
+      "name": "query_maximo",
+      "description": "Query data from Maximo using the OSLC REST API."
+    },
+    {
+      "name": "render_carbon_table",
+      "description": "Generates a beautiful Carbon Design System HTML table from Maximo data."
+    },
+    {
+      "name": "render_carbon_details",
+      "description": "Generates a beautiful Carbon Design System detail view for a specific Maximo record."
+    },
+    {
+      "name": "get_instance_details",
+      "description": "Introspect the Maximo instance to get context data (e.g., latest data dates, version)."
+    }
+  ],
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}

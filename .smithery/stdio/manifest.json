@@ -1,0 +1,149 @@
+{
+  "type": "stdio",
+  "runtime": "node",
+  "serverCard": {
+    "serverInfo": {
+      "name": "maximo-mcp-server",
+      "version": "1.0.0"
+    },
+    "tools": [
+      {
+        "name": "list_object_structures",
+        "description": "List available Maximo Object Structures (APIs) from the schema, with optional filtering.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filter": {
+              "type": "string",
+              "description": "Search term to filter Object Structures by name or description"
+            }
+          }
+        }
+      },
+      {
+        "name": "get_schema_details",
+        "description": "Get the detailed field definitions (properties, types) for a specific Maximo Object Structure.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "objectStructure": {
+              "type": "string",
+              "description": "The name of the Object Structure (e.g., MXWO, MXASSET)"
+            }
+          },
+          "required": [
+            "objectStructure"
+          ]
+        }
+      },
+      {
+        "name": "query_maximo",
+        "description": "Query data from Maximo using the OSLC REST API.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "objectStructure": {
+              "type": "string",
+              "description": "The Object Structure to query (e.g., mxwo, mxasset)"
+            },
+            "where": {
+              "type": "string",
+              "description": "OSLC where clause (e.g., status=\"APPR\" and siteid=\"BEDFORD\")"
+            },
+            "select": {
+              "type": "string",
+              "description": "Comma-separated list of fields to select (e.g., wonum,description,status)"
+            },
+            "pageSize": {
+              "type": "number",
+              "description": "Number of records to return (default 10)",
+              "default": 10
+            },
+            "orderBy": {
+              "type": "string",
+              "description": "OSLC orderBy clause (e.g., -reportdate)"
+            },
+            "formatted": {
+              "type": "boolean",
+              "description": "If true, returns a Carbon-styled HTML table instead of JSON (default: true)"
+            }
+          },
+          "required": [
+            "objectStructure"
+          ]
+        }
+      },
+      {
+        "name": "render_carbon_table",
+        "description": "Generates a beautiful Carbon Design System HTML table from Maximo data.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "objectStructure": {
+              "type": "string",
+              "description": "The Object Structure to query (e.g., mxwo, mxasset)"
+            },
+            "where": {
+              "type": "string",
+              "description": "OSLC where clause"
+            },
+            "select": {
+              "type": "string",
+              "description": "Comma-separated list of fields (e.g., wonum,description)"
+            },
+            "orderBy": {
+              "type": "string",
+              "description": "Sorting criteria"
+            },
+            "pageSize": {
+              "type": "number",
+              "description": "Number of records (default 10)"
+            },
+            "title": {
+              "type": "string",
+              "description": "Title for the table"
+            }
+          },
+          "required": [
+            "objectStructure"
+          ]
+        }
+      },
+      {
+        "name": "render_carbon_details",
+        "description": "Generates a beautiful Carbon Design System detail view for a specific Maximo record.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "objectStructure": {
+              "type": "string",
+              "description": "The Object Structure (e.g., mxwo)"
+            },
+            "where": {
+              "type": "string",
+              "description": "OSLC where clause to find the unique record (e.g., wonum=\"1001\")"
+            }
+          },
+          "required": [
+            "objectStructure",
+            "where"
+          ]
+        }
+      },
+      {
+        "name": "get_instance_details",
+        "description": "Introspect the Maximo instance to get context data (e.g., latest data dates, version).",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ],
+    "resources": [],
+    "prompts": []
+  },
+  "source": {
+    "commit": "71582a3c5e55affe03408c0ca48b7b50719b1eed",
+    "branch": "main"
+  }
+}

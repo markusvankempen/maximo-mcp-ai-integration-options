@@ -116,7 +116,21 @@ curl -X GET "https://your-maximo-host.com/maximo/oslc/oas/api" \
      -o maximo_openapi.json
 ```
 
-Alternatively, download via Swagger UI at: `https://your-host/maximo/oslc/oas/api.html`
+Alternatively, download via Swagger UI at: `https://your-host/maximo/oslc/oas/api.html` (Click "Explore" or "Download")
+
+**Method 3: Direct Browser Download (Manual)**
+
+If `curl` fails (e.g., due to SSL/network errors), you can manually download the file:
+
+1. Open this URL in your browser:
+   `https://[YOUR_MAXIMO_HOST]/maximo/oslc/oas/api`
+   *(Replace `[YOUR_MAXIMO_HOST]` with your actual server address)*
+
+2. You may be prompted to log in to Maximo.
+
+3. Once the JSON loads, right-click the page and select **"Save Page As..."**.
+
+4. Save the file as `maximo_openapi.json` in your project root folder.
 
 > **Note**: This file is ~12MB and contains all Object Structure definitions for your Maximo instance.
 
