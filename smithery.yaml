@@ -13,3 +13,23 @@ startCommand:
     MAXIMO_HOST:
       description: Base Host URL for the Maximo instance (e.g., https://your-host)
       required: false
+
+configSchema:
+  type: object
+  required:
+    - maximo_url
+    - maximo_api_key
+  properties:
+    maximo_url:
+      type: string
+      title: Maximo API URL
+      description: Base URL for the Maximo REST API (e.g., https://your-host/maximo/api)
+    maximo_api_key:
+      type: string
+      title: Maximo API Key
+      description: API Key for Maximo authentication
+      format: password
+    maximo_host:
+      type: string
+      title: Maximo Host
+      description: Base Host URL for the Maximo instance (optional)
