@@ -4,6 +4,7 @@
     "description": "Brings IBM Maximo data and tools to your AI assistant in VS Code.",
     "version": "0.0.1",
     "publisher": "markusvankempen",
+    "icon": "icon.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options.git"

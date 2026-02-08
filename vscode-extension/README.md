@@ -1,4 +1,4 @@
-# IBM Maximo MCP for AI
+# <img src="icon.png" width="40" height="40" align="center" style="margin-right: 10px;"> IBM Maximo MCP for AI
 
 Empower your AI assistant in VS Code with real-time access to your IBM Maximo data. This extension automatically configures the **Model Context Protocol (MCP)** server for Maximo, allowing AI tools like **GitHub Copilot**, **Continue**, and **Cursor** to query work orders, assets, and more.
 
