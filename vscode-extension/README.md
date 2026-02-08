@@ -17,17 +17,18 @@ Empower your AI assistant in VS Code with real-time access to your IBM Maximo da
 4. Enter your **Maximo URL** and **API Key**.
 5. Your AI assistant will now have access to Maximo tools!
 
+## 💬 Example Questions to Ask Your AI
 
-## 💡 Example Prompts
+Once configured, try asking your AI assistant:
 
-Once configured, you can ask your AI assistant tasks like:
+- **Work Orders**: *"Show me the last 5 work orders for site BEDFORD that are still open."*
+- **Assets**: *"Find all assets in the BOILER location and tell me their current status."*
+- **Schema**: *"What fields are available in the MXWO object structure?"*
+- **Details**: *"Get all information for work order #1001."*
+- **Troubleshooting**: *"Are there any overdue work orders assigned to me?"*
 
-- *"List the last 10 work orders where the status is 'APPR'."*
-- *"Show me the details for asset #12345."*
-- *"Query Maximo for assets in the 'BEDFORD' site."*
-- *"What is the schema for the MXWO object structure?"*
 
-## 📦 Tools Provided
+##  Tools Provided
 
 The extension enables the following tools for your AI:
 
