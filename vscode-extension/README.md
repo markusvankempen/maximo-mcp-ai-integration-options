@@ -50,8 +50,13 @@ The extension enables the following tools for your AI:
 - Check the **Output** panel in VS Code and select **MCP** or **Continue** from the dropdown to see connection logs.
 - Run the `Maximo: Configure MCP Server` command again to verify your credentials.
 
+## 📄 License
+
+This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
+
 ---
 
 **Developed by**: [Markus van Kempen](https://github.com/markusvankempen)  
 **Project Home**: [Maximo-MCP AI Integration Options](https://github.com/markusvankempen/maximo-mcp-ai-integration-options)
+
 
