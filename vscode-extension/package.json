@@ -1,0 +1,74 @@
+{
+    "name": "maximo-mcp",
+    "displayName": "IBM Maximo MCP for AI",
+    "description": "Brings IBM Maximo data and tools to your AI assistant in VS Code.",
+    "version": "0.0.1",
+    "publisher": "markusvankempen",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options.git"
+    },
+    "bugs": {
+        "url": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options/issues"
+    },
+    "homepage": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options#readme",
+    "license": "Apache-2.0",
+    "keywords": [
+        "mcp",
+        "maximo",
+        "ibm",
+        "ai",
+        "agent",
+        "llm"
+    ],
+    "engines": {
+        "vscode": "^1.90.0"
+    },
+    "categories": [
+        "Other",
+        "AI"
+    ],
+    "activationEvents": [],
+    "main": "./out/extension.js",
+    "contributes": {
+        "configuration": {
+            "title": "Maximo MCP",
+            "properties": {
+                "maximoMcp.url": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Base URL for the Maximo REST API (e.g., https://your-host/maximo/api)"
+                },
+                "maximoMcp.apiKey": {
+                    "type": "string",
+                    "default": "",
+                    "description": "API Key for Maximo authentication",
+                    "markdownDescription": "API Key for Maximo authentication. Obtain this from your Maximo profile settings."
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "maximoMcp.configure",
+                "title": "Maximo: Configure MCP Server"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/node": "20.x",
+        "@types/vscode": "^1.90.0",
+        "@typescript-eslint/eslint-plugin": "^7.11.0",
+        "@typescript-eslint/parser": "^7.11.0",
+        "@vscode/vsce": "^3.7.1",
+        "eslint": "^8.57.0",
+        "typescript": "^5.4.5"
+    }
+}
