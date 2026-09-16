@@ -1,17 +1,19 @@
 {
     "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
     "name": "io.github.markusvankempen/maximo-mcp-server",
-    "description": "Connect AI assistants directly to IBM Maximo for API discovery and OSLC data querying.",
+    "title": "IBM Maximo",
+    "description": "Connect AI assistants to IBM Maximo for API discovery, OSLC querying, and Carbon UI generation.",
+    "websiteUrl": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options#readme",
     "repository": {
         "url": "https://github.com/markusvankempen/maximo-mcp-ai-integration-options",
         "source": "github"
     },
-    "version": "1.0.2",
+    "version": "1.2.0",
     "packages": [
         {
             "registryType": "npm",
             "identifier": "maximo-mcp-server",
-            "version": "1.0.2",
+            "version": "1.2.0",
             "transport": {
                 "type": "stdio"
             },

@@ -1,12 +1,12 @@
 {
   "name": "maximo-mcp-server",
-  "version": "1.0.2",
+  "version": "1.2.0",
   "mcpName": "io.github.markusvankempen/maximo-mcp-server",
-  "description": "Model Context Protocol (MCP) server for IBM Maximo",
+  "description": "Model Context Protocol (MCP) server for IBM Maximo — schema discovery, OSLC queries, Carbon UI generation, and full CRUD write-back (create, update, actions)",
   "main": "maximo-mcp-server.js",
   "module": "./maximo-mcp-server.js",
   "bin": {
-    "maximo-mcp-server": "./maximo-mcp-server.js"
+    "maximo-mcp-server": "maximo-mcp-server.js"
   },
   "files": [
     "maximo-mcp-server.js",
@@ -28,11 +28,30 @@
   },
   "keywords": [
     "mcp",
+    "model-context-protocol",
     "maximo",
     "ibm",
+    "ibm-maximo",
     "ai",
     "agent",
-    "llm"
+    "llm",
+    "oslc",
+    "rest-api",
+    "asset-management",
+    "eam",
+    "work-orders",
+    "enterprise",
+    "copilot",
+    "cursor",
+    "api-discovery",
+    "code-generation",
+    "carbon-design",
+    "maintenance",
+    "iot",
+    "crud",
+    "write-back",
+    "create-record",
+    "update-record"
   ],
   "author": "Markus van Kempen",
   "license": "Apache-2.0",

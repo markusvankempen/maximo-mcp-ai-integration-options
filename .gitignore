@@ -24,6 +24,23 @@ npm-debug.log*
 # Build outputs
 dist/
 build/
+out/
+*.vsix
+
+# Legacy VS Code extension (replaced by maximo-api-explorer)
+vscode-extension/
+
+# Cursor extension (fork — maintained separately)
+maximo-cursor-extension/
+
+# Smithery cache
+.smithery/
+
+# Local MCP client configs (contain API keys)
+.bob/mcp.json
+
+# Log files
+logs/
 
 # Temporary files
 tmp/

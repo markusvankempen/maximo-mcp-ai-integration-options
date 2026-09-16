@@ -7,10 +7,10 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Protocol-5A29E4?style=for-the-badge)](https://modelcontextprotocol.io/)
 [![Maximo](https://img.shields.io/badge/IBM-Maximo-052FAD?style=for-the-badge&logo=ibm&logoColor=white)](https://www.ibm.com/products/maximo)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-v1.0.2-blue?style=for-the-badge)](package.json)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green?style=for-the-badge)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-v1.2.0-blue?style=for-the-badge)](package.json)
 
-*Transform your Maximo development workflow with AI-driven schema discovery, live data querying, and intelligent code generation.*
+*Transform your Maximo development workflow with AI-driven schema discovery, live data querying, intelligent code generation, and full write-back capabilities.*
 
 **Author:** Markus van Kempen  
 **Email:** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
@@ -33,6 +33,9 @@ The **Maximo MCP Server** is a [Model Context Protocol](https://modelcontextprot
 | 📊 **Query Live Data** | Execute OSLC REST queries and see real results |
 | 🎨 **Generate UI** | Create Carbon Design System tables and dashboards |
 | ✅ **Validate Instantly** | Test queries before generating final code |
+| ✏️ **Create Records** | Create Work Orders, Assets, Service Requests via AI |
+| 🔄 **Update Records** | Partially update any Maximo record by ID |
+| ⚡ **Run Actions** | Trigger Maximo business workflows (status changes, approvals) |
 
 ---
 
@@ -45,6 +48,7 @@ The **Maximo MCP Server** is a [Model Context Protocol](https://modelcontextprot
 | 📖 [**Maximo MCP Server Guide**](docs/Maximo_MCP_Server_Guide.md) | Complete setup, configuration, and tool reference |
 | 🔌 [**Maximo API Interaction Guide**](docs/Maximo_API_Interaction_Guide.md) | OSLC query syntax, code generation patterns, troubleshooting |
 | 🎬 [**Asset Manager Case Study**](docs/Asset_Manager_App_Case_Study.md) | Step-by-step walkthrough of building a complete app |
+| 🧩 [**Maximo API Explorer Guide**](docs/Maximo_API_Explorer_Guide.md) | VS Code extension: install, connect, explore, generate apps |
 
 ### French Translations
 
@@ -135,6 +139,59 @@ If `curl` fails (e.g., due to SSL/network errors), you can manually download the
 > **Note**: This file is ~12MB and contains all Object Structure definitions for your Maximo instance.
 
 ### IDE Configuration
+
+#### VS Code with GitHub Copilot (Recommended)
+
+**Option 1: Install from the MCP Server Gallery**
+
+1. Enable `chat.mcp.gallery.enabled` in VS Code settings
+2. Open the Extensions view (`⇧⌘X`)
+3. Type `@mcp maximo` in the search field
+4. Click **Install** to add the Maximo MCP server
+
+**Option 2: Add manually via `mcp.json`**
+
+1. Open the Command Palette (`⇧⌘P`) → **MCP: Open Workspace Folder Configuration**
+2. Add the following configuration:
+
+```json
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "maximo-url",
+      "description": "Maximo REST API Base URL (e.g., https://your-host/maximo/api)"
+    },
+    {
+      "type": "promptString",
+      "id": "maximo-api-key",
+      "description": "Maximo API Key",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "maximo-host",
+      "description": "Maximo Host URL (e.g., https://your-host)"
+    }
+  ],
+  "servers": {
+    "maximo-mcp-server": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "maximo-mcp-server"],
+      "env": {
+        "MAXIMO_URL": "${input:maximo-url}",
+        "MAXIMO_API_KEY": "${input:maximo-api-key}",
+        "MAXIMO_HOST": "${input:maximo-host}"
+      }
+    }
+  }
+}
+```
+
+3. VS Code will prompt you for your Maximo credentials when the server starts.
+
+> 💡 **Tip:** This project includes a `.vscode/mcp.json` file. If you clone the repo, VS Code will auto-detect the MCP server configuration.
 
 #### Google Antigravity (Manual Setup Required)
 
@@ -238,9 +295,11 @@ open http://localhost:3002/demos/assets.html
 
 ## 🛠 Available MCP Tools
 
-The server exposes 6 tools to the AI:
+The server exposes **9 tools** to the AI — 6 read tools and 3 write/CRUD tools:
 
 ![MCP Tools UI](images/mcp_tools_ui.png)
+
+### Read Tools
 
 | Tool Name | Description |
 | :--- | :--- |
@@ -250,6 +309,16 @@ The server exposes 6 tools to the AI:
 | `render_carbon_table` | Generate Carbon Design HTML tables |
 | `render_carbon_details` | Generate detail view for a record |
 | `get_instance_details` | Check server connectivity |
+
+### Write Tools (CRUD)
+
+> ⚠️ **Write tools modify live data.** Use a read-only API key for exploration; only enable write access for known workflows.
+
+| Tool Name | Description |
+| :--- | :--- |
+| `create_record` | Create a new record in any Maximo Object Structure |
+| `update_record` | Partially update fields on an existing record by ID |
+| `run_action` | Execute Maximo business actions (status changes, approvals) |
 
 ---
 
@@ -309,6 +378,84 @@ WHERE status NOT IN ('COMP', 'CLOSE', 'CAN')
 
 See the [Asset Manager Case Study](docs/Asset_Manager_App_Case_Study.md) for the full walkthrough.
 
+### 5. Create & Update Records (CRUD)
+> "Create a corrective maintenance work order for the BEDFORD site, priority 1, description 'Pump failure inspection'."
+
+The AI calls `get_schema_details(MXWO)` to confirm field names, then `create_record`:
+
+```http
+POST /maximo/api/os/MXWO?lean=1
+apikey: YOUR_KEY
+Content-Type: application/json
+
+{ "description": "Pump failure inspection", "siteid": "BEDFORD", "worktype": "CM", "wopriority": 1 }
+```
+
+> "Now approve work order 1025 with memo 'Reviewed and approved'."
+
+```http
+POST /maximo/api/os/MXWO/1025?action=changeStatus&lean=1
+apikey: YOUR_KEY
+Content-Type: application/json
+
+{ "status": "APPR", "memo": "Reviewed and approved" }
+```
+
+See the full guide: [**Maximo MCP Server Guide — CRUD Workflows**](docs/Maximo_MCP_Server_Guide.md#65-crud-workflows-write-back-to-maximo)
+
+---
+
+## 🧩 VS Code Extensions
+
+This project includes two VS Code extensions for interactive Maximo API development — **no AI agent required**.
+
+### Maximo API Explorer
+
+A full-featured VS Code extension for discovering, testing, and generating code for Maximo REST APIs.
+
+![Maximo API Explorer — Sidebar](images/api-explorer-sidebar.png)
+
+*Connected to a live Maximo instance showing Object Structures (MXWO, MXSR, MXASSET, etc.) and API Endpoints.*
+
+| Feature | Description |
+|---------|-------------|
+| **Sidebar Tree View** | Browse all Object Structures (MXWO, MXASSET, MXSR, etc.) with attributes, types, and relationships |
+| **Interactive API Tester** | Build OSLC queries visually, send raw requests, inspect schemas — all in a WebView panel |
+| **Code Snippet Generator** | Generate ready-to-use API calls in cURL, Python, JavaScript, TypeScript, and Java |
+| **Carbon App Generator** | Scaffold complete Work Order Browser and Asset Manager web apps with one click |
+| **Export for AI Agents** | Export schemas and docs to `.maximo/` for use with Copilot, Cursor, or any AI assistant |
+
+![Maximo API Explorer — API Tester](images/api-explorer-tester.png)
+
+*OSLC Query Builder with live JSON response (200 OK, 20 records from MXWO).*
+
+#### Quick Start
+
+```bash
+cd maximo-api-explorer
+npm install && npm run compile
+# Press F5 in VS Code to launch the Extension Development Host
+```
+
+See the full guide: [**Maximo API Explorer Guide**](docs/Maximo_API_Explorer_Guide.md)
+
+### Maximo Cursor Explorer
+
+A fork of the API Explorer optimized for [Cursor](https://cursor.com)'s AI features:
+
+| Feature | Description |
+|---------|-------------|
+| **.cursorrules Generator** | Auto-generate rules giving Cursor AI deep Maximo API knowledge |
+| **AI Context Export** | Export schemas to `.cursor/context/` for use with `@file` references |
+| **Prompt Templates** | Pre-built prompts for OSLC queries, CRUD services, dashboards, and more |
+| **All Standard Features** | Everything from the API Explorer, plus a dedicated Cursor AI tab |
+
+```bash
+cd maximo-cursor-extension
+npm install && npm run compile
+# Press F5 in VS Code to launch
+```
+
 ---
 
 ## 📁 Project Structure
@@ -317,17 +464,36 @@ See the [Asset Manager Case Study](docs/Asset_Manager_App_Case_Study.md) for the
 Maximo-MCP/
 ├── maximo-mcp-server.js       # 🔌 MCP Server implementation
 ├── server.js                  # 🌐 Local proxy server for CORS
-├── package.json               # 📦 Dependencies
+├── package.json               # 📦 Dependencies & scripts
 ├── README.md                  # This file
 ├── .env.example               # Environment template
-├── .gitignore                 # Git ignore rules
 │
 ├── docs/                      # 📚 Documentation
 │   ├── Maximo_MCP_Server_Guide.md         # Complete MCP guide
 │   ├── Maximo_API_Interaction_Guide.md    # API interaction patterns
 │   ├── Asset_Manager_App_Case_Study.md    # Build walkthrough
+│   ├── Maximo_API_Explorer_Guide.md       # VS Code extension guide
 │   ├── Maximo_MCP_Server_Guide_FR.md      # French translation
 │   └── Maximo_API_Interaction_Guide_FR.md # French translation
+│
+├── maximo-api-explorer/       # 🧩 VS Code Extension
+│   ├── package.json                       # Extension manifest
+│   ├── src/extension.ts                   # Activation & commands
+│   ├── src/api/                           # API client & discovery
+│   ├── src/auth/                          # Authentication manager
+│   ├── src/views/                         # Sidebar tree & WebView panel
+│   ├── src/snippets/                      # Multi-language code generator
+│   ├── src/templates/                     # Carbon app generators
+│   └── src/export/                        # AI context exporter
+│
+├── maximo-cursor-extension/   # 🤖 Cursor-Optimized Extension
+│   ├── package.json                       # Extension manifest
+│   ├── src/extension.ts                   # Activation & commands
+│   ├── src/cursor/                        # .cursorrules, prompts, context
+│   └── src/...                            # Same structure as api-explorer
+│
+├── CodeExample/               # 📦 Standalone Carbon App Example
+│   └── maximo-workorders-carbon/          # Work Order Browser (reference)
 │
 ├── demos/                     # 🎨 Demo Applications
 │   ├── assets.html                        # Asset Manager app
@@ -337,8 +503,11 @@ Maximo-MCP/
 ├── images/                    # 📸 Screenshots & Recordings
 │   ├── assets_demo_recording.webp         # Full demo recording
 │   ├── assets_loaded.png                  # Dashboard screenshot
-│   ├── pump_search_results.png            # Search demo
-│   └── laredo_filtered.png                # Filter demo
+│   ├── api-explorer-sidebar.png           # Extension sidebar & tree view
+│   ├── api-explorer-tester.png            # OSLC Query Builder & JSON response
+│   ├── api-explorer-carbon-app.png        # Generated Work Order Browser app
+│   ├── api-explorer-snippets.png          # Carbon App Templates (Examples tab)
+│   └── ...                                # More screenshots
 │
 └── config/                    # ⚙️ Configuration Templates
     └── mcp_config.json.example            # MCP config template
@@ -351,9 +520,11 @@ Maximo-MCP/
 | Practice | Description |
 |----------|-------------|
 | 🔐 **Local Execution** | MCP server runs on your machine; API keys never leave your environment |
-| 📖 **Read-Only Keys** | Use limited-permission API keys for development |
+| 📖 **Read-Only Keys for Dev** | Use limited-permission API keys for exploration and development |
+| ✏️ **Separate Write Keys** | Only enable write permissions on API keys used for known CRUD workflows |
 | 🔒 **Environment Variables** | Never hardcode credentials in config files |
 | 🌐 **HTTPS Only** | Always use encrypted connections to Maximo |
+| 🧪 **Test Non-Production First** | Always validate CRUD operations on a dev/test instance before production |
 
 ---
 
@@ -371,7 +542,7 @@ Contributions are welcome! Please read our contributing guidelines before submit
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ---
 

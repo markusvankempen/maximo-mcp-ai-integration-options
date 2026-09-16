@@ -27,40 +27,145 @@ const fs = require('fs');
 const path = require('path');
 
 // --- Configuration (loaded from environment variables) ---
-const MAXIMO_URL = process.env.MAXIMO_URL;
+const RAW_MAXIMO_URL = (process.env.MAXIMO_URL || '').replace(/\/+$/, ''); // strip trailing slashes
 const API_KEY = process.env.MAXIMO_API_KEY;
 const OPENAPI_FILE = process.env.MAXIMO_OPENAPI_PATH || path.join(__dirname, 'maximo_openapi.json');
 
+// Normalize MAXIMO_URL: ensure it ends with /api so queries hit /api/os/{OS}
+function normalizeMaximoUrl(raw) {
+    if (!raw) return '';
+    // Already ends with /api
+    if (raw.endsWith('/api')) return raw;
+    // Ends with /oslc — replace with /api
+    if (raw.endsWith('/oslc')) return raw.replace(/\/oslc$/, '/api');
+    // Bare Maximo URL like https://host/maximo
+    if (raw.match(/\/maximo$/i)) return raw + '/api';
+    // Something else — append /api as best guess
+    return raw + '/api';
+}
+
+const MAXIMO_URL = normalizeMaximoUrl(RAW_MAXIMO_URL);
+
 // Validate required environment variables
-if (!MAXIMO_URL || !API_KEY) {
+if (!RAW_MAXIMO_URL || !API_KEY) {
     console.error("ERROR: Missing required environment variables.");
     console.error("Please set MAXIMO_URL and MAXIMO_API_KEY in your .env file or MCP config.");
+    console.error("  MAXIMO_URL  — e.g. https://your-host/maximo/api  (or https://your-host/maximo)");
+    console.error("  MAXIMO_API_KEY — your Maximo API key");
     console.error("See .env.example for reference.");
 }
 
+if (RAW_MAXIMO_URL && RAW_MAXIMO_URL !== MAXIMO_URL) {
+    console.error(`URL normalized: ${RAW_MAXIMO_URL} → ${MAXIMO_URL}`);
+}
 
 // --- State ---
 let openApiSpec = null;
+let schemaLoaded = false;
 
-// --- Load Schema ---
-try {
-    if (fs.existsSync(OPENAPI_FILE)) {
-        console.error(`Loading OpenAPI spec from ${OPENAPI_FILE}...`);
-        const raw = fs.readFileSync(OPENAPI_FILE, 'utf-8');
-        openApiSpec = JSON.parse(raw);
-        console.error(`Loaded OpenAPI spec. Components: ${Object.keys(openApiSpec.components?.schemas || {}).length}`);
-    } else {
-        console.error("Warning: maximo_openapi.json not found. Schema introspection will be limited.");
+// --- Load Schema (local file first, then live fetch) ---
+function loadLocalSchema() {
+    try {
+        if (fs.existsSync(OPENAPI_FILE)) {
+            console.error(`Loading OpenAPI spec from ${OPENAPI_FILE}...`);
+            const raw = fs.readFileSync(OPENAPI_FILE, 'utf-8');
+            openApiSpec = JSON.parse(raw);
+            schemaLoaded = true;
+            console.error(`Loaded OpenAPI spec. Components: ${Object.keys(openApiSpec.components?.schemas || {}).length}`);
+            return true;
+        }
+    } catch (e) {
+        console.error("Error loading local OpenAPI spec:", e.message);
     }
-} catch (e) {
-    console.error("Error loading OpenAPI spec:", e);
+    return false;
 }
+
+async function fetchLiveSchema() {
+    if (!MAXIMO_URL || !API_KEY) return false;
+    // Maximo exposes its OpenAPI spec at /oas/api.json (relative to /api base)
+    // e.g. https://host/maximo/api  →  /oas/api.json  →  https://host/maximo/oas/api.json
+    // Or the OSLC variant:  https://host/maximo/oslc/oas/api
+    const baseForOas = MAXIMO_URL.replace(/\/api$/, '');
+    const oasUrls = [
+        `${baseForOas}/oslc/oas/api`,      // primary: /oslc/oas/api
+        `${MAXIMO_URL}/oas/api.json`,       // variant: /api/oas/api.json
+    ];
+
+    for (const oasUrl of oasUrls) {
+        try {
+            console.error(`Fetching OpenAPI spec from ${oasUrl}...`);
+            const res = await fetch(oasUrl, {
+                headers: {
+                    'apikey': API_KEY,
+                    'Accept': 'application/json'
+                }
+            });
+            if (res.ok) {
+                openApiSpec = await res.json();
+                schemaLoaded = true;
+                const count = Object.keys(openApiSpec.components?.schemas || {}).length;
+                console.error(`Loaded live OpenAPI spec from ${oasUrl}. Schemas: ${count}`);
+                return true;
+            } else {
+                console.error(`  → ${res.status} ${res.statusText}`);
+            }
+        } catch (e) {
+            console.error(`  → Failed: ${e.message}`);
+        }
+    }
+    return false;
+}
+
+// Discover Object Structures from live OSLC catalog as lightweight fallback
+async function discoverObjectStructures() {
+    if (!MAXIMO_URL || !API_KEY) return [];
+    try {
+        const url = `${MAXIMO_URL}/os?lean=1&oslc.pageSize=200`;
+        console.error(`Discovering Object Structures from ${url}...`);
+        const res = await fetch(url, {
+            headers: { 'apikey': API_KEY, 'Accept': 'application/json' }
+        });
+        if (!res.ok) return [];
+        const data = await res.json();
+        const members = data.member || [];
+        return members.map(m => {
+            const name = m['oslc:name'] || m['spi:objectstructure'] || '';
+            const href = m['rdf:about'] || m['href'] || '';
+            const extracted = name || href.split('/').pop() || '';
+            return {
+                name: extracted.toUpperCase(),
+                title: m['dcterms:title'] || extracted,
+                description: m['dcterms:description'] || ''
+            };
+        }).filter(m => m.name);
+    } catch (e) {
+        console.error('Object Structure discovery failed:', e.message);
+        return [];
+    }
+}
+
+// Well-known Object Structures as ultimate fallback
+const WELL_KNOWN_OS = [
+    { name: 'MXWO', title: 'Work Orders', description: 'Work Order management' },
+    { name: 'MXSR', title: 'Service Requests', description: 'Service Request management' },
+    { name: 'MXASSET', title: 'Assets', description: 'Asset management' },
+    { name: 'MXINVENTORY', title: 'Inventory', description: 'Inventory management' },
+    { name: 'MXPO', title: 'Purchase Orders', description: 'Purchase Order management' },
+    { name: 'MXPR', title: 'Purchase Requisitions', description: 'Purchase Requisition management' },
+    { name: 'MXPERSON', title: 'Persons', description: 'Person records' },
+    { name: 'MXLOCATION', title: 'Locations', description: 'Location management' },
+    { name: 'MXITEM', title: 'Items', description: 'Item master' },
+    { name: 'MXDOMAIN', title: 'Domains', description: 'Domain/lookup values' },
+];
+
+// Initialize schema (try local file synchronously, schedule live fetch)
+loadLocalSchema();
 
 // --- Server Setup ---
 const server = new Server(
     {
         name: "maximo-mcp-server",
-        version: "1.0.0",
+        version: "1.2.0",
     },
     {
         capabilities: {
@@ -76,23 +181,39 @@ const server = new Server(
  * Lists available object structures from the loaded OpenAPI spec.
  */
 async function listObjectStructures({ filter }) {
-    if (!openApiSpec || !openApiSpec.components || !openApiSpec.components.schemas) {
-        return { content: [{ type: "text", text: "OpenAPI spec not loaded or invalid." }] };
+    // Try loading schema on first use if not yet loaded
+    if (!schemaLoaded) {
+        await fetchLiveSchema();
     }
 
-    const schemas = openApiSpec.components.schemas;
-    const results = Object.keys(schemas)
-        .filter(key => key.startsWith('RESOURCE_')) // Filter for Resources usually maps to OS
-        .map(key => {
-            const def = schemas[key];
-            return {
-                name: key.replace('RESOURCE_', ''),
-                title: def.title || key,
-                description: def.description || ''
-            };
-        })
-        .filter(item => !filter || item.name.toLowerCase().includes(filter.toLowerCase()) || item.description.toLowerCase().includes(filter.toLowerCase()))
-        .slice(0, 50); // Limit results
+    let results;
+
+    if (openApiSpec && openApiSpec.components && openApiSpec.components.schemas) {
+        // Use OpenAPI spec if available
+        const schemas = openApiSpec.components.schemas;
+        results = Object.keys(schemas)
+            .filter(key => key.startsWith('RESOURCE_'))
+            .map(key => {
+                const def = schemas[key];
+                return {
+                    name: key.replace('RESOURCE_', ''),
+                    title: def.title || key,
+                    description: def.description || ''
+                };
+            });
+    } else {
+        // Fallback: discover from live OSLC catalog
+        results = await discoverObjectStructures();
+        if (results.length === 0) {
+            // Ultimate fallback: well-known list
+            results = WELL_KNOWN_OS;
+            console.error('Using well-known Object Structures as fallback');
+        }
+    }
+
+    results = results
+        .filter(item => !filter || item.name.toLowerCase().includes(filter.toLowerCase()) || (item.description || '').toLowerCase().includes(filter.toLowerCase()))
+        .slice(0, 50);
 
     return {
         content: [{ type: "text", text: JSON.stringify(results, null, 2) }]
@@ -104,34 +225,67 @@ async function listObjectStructures({ filter }) {
  * Gets the property definition for a specific Object Structure
  */
 async function getSchemaDetails({ objectStructure }) {
-    if (!openApiSpec) {
-        return { content: [{ type: "text", text: "OpenAPI spec not loaded." }] };
+    // Try loading schema on first use if not yet loaded
+    if (!schemaLoaded) {
+        await fetchLiveSchema();
     }
 
-    // Maximo OpenAPI often names resource schemas as RESOURCE_{NAME}
-    const schemaName = `RESOURCE_${objectStructure.toUpperCase()}`;
-    const schema = openApiSpec.components?.schemas?.[schemaName];
+    const osName = objectStructure.toUpperCase();
+    const schemaName = `RESOURCE_${osName}`;
+    const schema = openApiSpec?.components?.schemas?.[schemaName];
 
-    if (!schema) {
-        return { content: [{ type: "text", text: `Schema for ${objectStructure} not found.` }] };
+    if (schema) {
+        // Simplify the schema for LLM consumption
+        const simpleSchema = {
+            name: objectStructure,
+            description: schema.description,
+            properties: Object.entries(schema.properties || {}).map(([propName, propDef]) => ({
+                name: propName,
+                type: propDef.type,
+                title: propDef.title,
+                description: propDef.description,
+                maxLength: propDef.maxLength
+            }))
+        };
+        return {
+            content: [{ type: "text", text: JSON.stringify(simpleSchema, null, 2) }]
+        };
     }
 
-    // Simplify the schema for LLM consumption
-    const simpleSchema = {
-        name: objectStructure,
-        description: schema.description,
-        properties: Object.entries(schema.properties || {}).map(([propName, propDef]) => ({
-            name: propName,
-            type: propDef.type,
-            title: propDef.title,
-            description: propDef.description,
-            maxLength: propDef.maxLength
-        }))
-    };
-
-    return {
-        content: [{ type: "text", text: JSON.stringify(simpleSchema, null, 2) }]
-    };
+    // Fallback: infer schema from a live record
+    console.error(`Schema RESOURCE_${osName} not found in OpenAPI spec, inferring from live data...`);
+    try {
+        const url = `${MAXIMO_URL}/os/${osName}?lean=1&oslc.pageSize=1`;
+        const res = await fetch(url, {
+            headers: { 'apikey': API_KEY, 'Content-Type': 'application/json' }
+        });
+        if (!res.ok) {
+            return { content: [{ type: "text", text: `Could not load schema for ${objectStructure}. OpenAPI spec not available and live query returned ${res.status}.` }] };
+        }
+        const data = await res.json();
+        const sample = (data.member || [])[0];
+        if (!sample) {
+            return { content: [{ type: "text", text: `No records found in ${objectStructure} to infer schema from.` }] };
+        }
+        const inferred = {
+            name: objectStructure,
+            description: `Schema inferred from live ${osName} record (OpenAPI spec not available)`,
+            properties: Object.entries(sample)
+                .filter(([k]) => !k.startsWith('_') && k !== 'href')
+                .map(([propName, propVal]) => ({
+                    name: propName,
+                    type: typeof propVal === 'number' ? 'number' : typeof propVal === 'boolean' ? 'boolean' : Array.isArray(propVal) ? 'array' : 'string',
+                    title: propName,
+                    description: '',
+                    sample: typeof propVal === 'object' ? undefined : propVal
+                }))
+        };
+        return {
+            content: [{ type: "text", text: JSON.stringify(inferred, null, 2) }]
+        };
+    } catch (e) {
+        return { content: [{ type: "text", text: `Schema for ${objectStructure} not found. OpenAPI spec not loaded and live inference failed: ${e.message}` }] };
+    }
 }
 
 /**
@@ -161,8 +315,14 @@ async function queryMaximo({ objectStructure, where, select, orderBy, pageSize =
         });
 
         if (!response.ok) {
+            let hint = '';
+            if (response.status === 404) {
+                hint = `\n\nHint: 404 usually means the URL is wrong. Current base: ${MAXIMO_URL}\nFull request URL: ${url}\nEnsure MAXIMO_URL points to the Maximo API base (e.g. https://your-host/maximo/api).`;
+            } else if (response.status === 401 || response.status === 403) {
+                hint = '\n\nHint: Check that MAXIMO_API_KEY is valid and has the required permissions.';
+            }
             return {
-                content: [{ type: "text", text: `Error ${response.status}: ${response.statusText}` }],
+                content: [{ type: "text", text: `Error ${response.status}: ${response.statusText}${hint}` }],
                 isError: true
             };
         }
@@ -171,10 +331,13 @@ async function queryMaximo({ objectStructure, where, select, orderBy, pageSize =
 
         // Extract relevant member data
         const members = data.member || [];
+        const warnings = SmartValidator.validateQuery({ objectStructure, where, select }, openApiSpec);
+
         const result = {
             totalCount: data.responseInfo?.totalCount,
             nextPage: data.responseInfo?.nextPage?.href,
             count: members.length,
+            warnings: warnings.length > 0 ? warnings : undefined,
             records: members
         };
 
@@ -420,6 +583,346 @@ async function renderCarbonDetails({ objectStructure, where }) {
     };
 }
 
+// --- Smart Validation Warnings Engine ---
+
+/**
+ * Smart Validation Warnings Engine
+ * Provides pre-flight syntax checks, fuzzy field matching, site requirement validation,
+ * worktype checks, and status transition sequence validation for Maximo OSLC REST API.
+ */
+class SmartValidator {
+    /**
+     * Pre-flight validation for OSLC queries
+     */
+    static validateQuery({ objectStructure, where, select }, openApiSpec) {
+        const warnings = [];
+
+        if (where) {
+            // 1. Check for unquoted string values in where clause (e.g. status=APPR -> status="APPR")
+            const unquotedMatch = where.match(/(\b[a-zA-Z0-9_\.]+\b)\s*=\s*([a-zA-Z][a-zA-Z0-9_]*)\b(?!\s*\(|\s*\")/);
+            if (unquotedMatch && !['true', 'false', 'null', 'and', 'or', 'not', 'in'].includes(unquotedMatch[2].toLowerCase())) {
+                warnings.push(`OSLC syntax warning: String value '${unquotedMatch[2]}' in where clause should be double-quoted (e.g. ${unquotedMatch[1]}="${unquotedMatch[2]}").`);
+            }
+
+            // 2. Check for JS/SQL logical operators
+            if (/\&\&/.test(where)) {
+                warnings.push(`OSLC syntax warning: Use 'and' instead of '&&' in OSLC where clauses.`);
+            }
+            if (/\|\|/.test(where)) {
+                warnings.push(`OSLC syntax warning: Use 'or' instead of '||' in OSLC where clauses.`);
+            }
+            if (/==/.test(where)) {
+                warnings.push(`OSLC syntax warning: Use '=' instead of '==' in OSLC where clauses.`);
+            }
+        }
+
+        if (openApiSpec && objectStructure) {
+            const osName = objectStructure.toUpperCase();
+            const schemaName = `RESOURCE_${osName}`;
+            const schema = openApiSpec?.components?.schemas?.[schemaName];
+            if (schema && schema.properties) {
+                const knownProps = Object.keys(schema.properties);
+                const knownLower = knownProps.map(p => p.toLowerCase());
+
+                if (select) {
+                    const requestedFields = select.split(',').map(f => f.trim()).filter(Boolean);
+                    for (const field of requestedFields) {
+                        if (!knownLower.includes(field.toLowerCase())) {
+                            const match = this.findClosestMatch(field, knownProps);
+                            warnings.push(`Unknown field '${field}' in select for ${osName}.${match ? ` Did you mean '${match}'?` : ''}`);
+                        }
+                    }
+                }
+            }
+        }
+
+        return warnings;
+    }
+
+    /**
+     * Pre-flight validation for record creation
+     */
+    static validateCreate({ objectStructure, recordData }) {
+        const warnings = [];
+        const os = (objectStructure || '').toUpperCase();
+        const payload = typeof recordData === 'string' ? JSON.parse(recordData || '{}') : (recordData || {});
+
+        // 1. Missing siteid warning (preventing #1 site error)
+        if (['MXWO', 'MXASSET', 'MXSR', 'MXPO', 'MXPR', 'MXINVENTORY', 'MXLOCATION'].includes(os)) {
+            if (!payload.siteid && !payload.SITEID) {
+                warnings.push(`Pre-flight warning: 'siteid' is missing in recordData. If your Maximo user profile lacks a Default Insert Site, creation will fail with HTTP 400.`);
+            }
+        }
+
+        // 2. Worktype validation
+        const worktype = payload.worktype || payload.WORKTYPE;
+        if (worktype) {
+            const validTypes = ['CM', 'PM', 'EM', 'CP', 'AM', 'BD'];
+            if (!validTypes.includes(String(worktype).toUpperCase())) {
+                warnings.push(`Unrecognized worktype '${worktype}'. Standard Maximo work types: CM (Corrective), PM (Preventive), EM (Emergency), CP (Capital Project).`);
+            }
+        }
+
+        // 3. Mandatory description recommendation
+        if (['MXWO', 'MXSR'].includes(os) && !payload.description && !payload.DESCRIPTION) {
+            warnings.push(`Recommendation: Adding a 'description' field improves record searchability.`);
+        }
+
+        return warnings;
+    }
+
+    /**
+     * Validation for actions / status changes
+     */
+    static validateAction({ objectStructure, recordId, action, actionData }) {
+        const warnings = [];
+        const os = (objectStructure || '').toUpperCase();
+        const act = (action || '').toLowerCase();
+        const payload = typeof actionData === 'string' ? JSON.parse(actionData || '{}') : (actionData || {});
+
+        if (act === 'changestatus' || act === 'status') {
+            const targetStatus = (payload.status || payload.STATUS || '').toUpperCase();
+            if (os === 'MXWO' && targetStatus) {
+                warnings.push(`Work Order status transition note: Target status '${targetStatus}'. Standard WO sequence: WAPPR → APPR → INPRG → COMP → CLOSE.`);
+            }
+        }
+
+        return warnings;
+    }
+
+    static findClosestMatch(target, candidates) {
+        const t = target.toLowerCase();
+        for (const candidate of candidates) {
+            const c = candidate.toLowerCase();
+            if (c.includes(t) || t.includes(c)) return candidate;
+        }
+        let bestCandidate = null;
+        let minDistance = 3;
+        for (const candidate of candidates) {
+            const dist = this.levenshtein(t, candidate.toLowerCase());
+            if (dist < minDistance) {
+                minDistance = dist;
+                bestCandidate = candidate;
+            }
+        }
+        return bestCandidate;
+    }
+
+    static levenshtein(a, b) {
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1
+                    );
+                }
+            }
+        }
+        return matrix[b.length][a.length];
+    }
+}
+
+// --- CRUD Tool Implementations ---
+
+/**
+ * Tool: create_record
+ * Creates a new record in a Maximo Object Structure via REST POST.
+ * The AI must supply the required fields for the target Object Structure.
+ */
+async function createRecord({ objectStructure, recordData }) {
+    if (!MAXIMO_URL || !API_KEY) {
+        return { content: [{ type: "text", text: "Error: MAXIMO_URL and MAXIMO_API_KEY must be set." }], isError: true };
+    }
+
+    const osName = objectStructure.toUpperCase();
+    const url = `${MAXIMO_URL}/os/${osName}?lean=1`;
+
+    let payload;
+    try {
+        payload = typeof recordData === 'string' ? JSON.parse(recordData) : recordData;
+    } catch (e) {
+        return { content: [{ type: "text", text: `Error: recordData must be valid JSON. ${e.message}` }], isError: true };
+    }
+
+    const warnings = SmartValidator.validateCreate({ objectStructure: osName, recordData: payload });
+
+    console.error(`Creating record in ${osName}: ${JSON.stringify(payload)}`);
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'apikey': API_KEY,
+                'Content-Type': 'application/json',
+                'x-method-override': 'BULK',
+                'Properties': '*'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const responseText = await response.text();
+        let responseData;
+        try { responseData = JSON.parse(responseText); } catch { responseData = responseText; }
+
+        if (!response.ok) {
+            let errorMsg = `Error ${response.status}: ${response.statusText}`;
+            if (typeof responseData === 'object' && responseData?.Error?.message) {
+                errorMsg += `\nMaximo Error: ${responseData.Error.message}`;
+            } else if (typeof responseData === 'string' && responseData.length < 500) {
+                errorMsg += `\nDetails: ${responseData}`;
+            }
+            if (response.status === 400) errorMsg += '\n\nHint: Ensure required fields are included and your Maximo user profile has a Default Insert Site set (avatar → Profile).';
+            if (response.status === 401 || response.status === 403) errorMsg += '\n\nHint: API key may lack write permissions. Ensure the key has "Create" access on the target Object Structure.';
+            return { content: [{ type: "text", text: errorMsg }], isError: true };
+        }
+
+        const result = {
+            status: 'success',
+            httpStatus: response.status,
+            objectStructure: osName,
+            warnings: warnings.length > 0 ? warnings : undefined,
+            record: responseData
+        };
+        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+
+    } catch (error) {
+        return { content: [{ type: "text", text: `Network Error: ${error.message}` }], isError: true };
+    }
+}
+
+/**
+ * Tool: update_record
+ * Updates an existing record in Maximo via PATCH (using x-method-override header).
+ * Requires the record href or a where clause to identify the record.
+ */
+async function updateRecord({ objectStructure, recordId, recordData }) {
+    if (!MAXIMO_URL || !API_KEY) {
+        return { content: [{ type: "text", text: "Error: MAXIMO_URL and MAXIMO_API_KEY must be set." }], isError: true };
+    }
+
+    const osName = objectStructure.toUpperCase();
+    const url = `${MAXIMO_URL}/os/${osName}/${encodeURIComponent(recordId)}?lean=1`;
+
+    let payload;
+    try {
+        payload = typeof recordData === 'string' ? JSON.parse(recordData) : recordData;
+    } catch (e) {
+        return { content: [{ type: "text", text: `Error: recordData must be valid JSON. ${e.message}` }], isError: true };
+    }
+
+    console.error(`Updating ${osName} record ${recordId}: ${JSON.stringify(payload)}`);
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'apikey': API_KEY,
+                'Content-Type': 'application/json',
+                'x-method-override': 'PATCH',
+                'Properties': '*'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const responseText = await response.text();
+        let responseData;
+        try { responseData = JSON.parse(responseText); } catch { responseData = responseText; }
+
+        if (!response.ok) {
+            let errorMsg = `Error ${response.status}: ${response.statusText}`;
+            if (typeof responseData === 'object' && responseData?.Error?.message) {
+                errorMsg += `\nMaximo Error: ${responseData.Error.message}`;
+            }
+            if (response.status === 404) errorMsg += `\n\nHint: Record ID "${recordId}" not found in ${osName}. Verify the record exists using query_maximo first.`;
+            return { content: [{ type: "text", text: errorMsg }], isError: true };
+        }
+
+        const result = {
+            status: 'success',
+            httpStatus: response.status,
+            objectStructure: osName,
+            recordId,
+            updatedRecord: responseData
+        };
+        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+
+    } catch (error) {
+        return { content: [{ type: "text", text: `Network Error: ${error.message}` }], isError: true };
+    }
+}
+
+/**
+ * Tool: run_action
+ * Executes a Maximo action (e.g., status change) on an existing record.
+ * Actions trigger Maximo business rules (e.g., changeStatus, approve).
+ */
+async function runAction({ objectStructure, recordId, action, actionData }) {
+    if (!MAXIMO_URL || !API_KEY) {
+        return { content: [{ type: "text", text: "Error: MAXIMO_URL and MAXIMO_API_KEY must be set." }], isError: true };
+    }
+
+    const osName = objectStructure.toUpperCase();
+    const url = `${MAXIMO_URL}/os/${osName}/${encodeURIComponent(recordId)}?action=${encodeURIComponent(action)}&lean=1`;
+
+    let payload = {};
+    if (actionData) {
+        try {
+            payload = typeof actionData === 'string' ? JSON.parse(actionData) : actionData;
+        } catch (e) {
+            return { content: [{ type: "text", text: `Error: actionData must be valid JSON. ${e.message}` }], isError: true };
+        }
+    }
+
+    const warnings = SmartValidator.validateAction({ objectStructure: osName, recordId, action, actionData: payload });
+
+    console.error(`Running action ${action} on ${osName}/${recordId}`);
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'apikey': API_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const responseText = await response.text();
+        let responseData;
+        try { responseData = JSON.parse(responseText); } catch { responseData = responseText; }
+
+        if (!response.ok) {
+            let errorMsg = `Error ${response.status}: ${response.statusText}`;
+            if (typeof responseData === 'object' && responseData?.Error?.message) {
+                errorMsg += `\nMaximo Error: ${responseData.Error.message}`;
+            }
+            if (response.status === 400) errorMsg += `\n\nHint: The action "${action}" may not be valid for record "${recordId}" in its current status. Common actions: changeStatus, initiate, approve, reject.`;
+            return { content: [{ type: "text", text: errorMsg }], isError: true };
+        }
+
+        const result = {
+            status: 'success',
+            httpStatus: response.status,
+            objectStructure: osName,
+            recordId,
+            action,
+            warnings: warnings.length > 0 ? warnings : undefined,
+            response: responseData || 'Action completed successfully'
+        };
+        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+
+    } catch (error) {
+        return { content: [{ type: "text", text: `Network Error: ${error.message}` }], isError: true };
+    }
+}
+
 // --- Protocol Handling ---
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -546,6 +1049,72 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                     type: "object",
                     properties: {},
                 }
+            },
+            {
+                name: "create_record",
+                description: "Create a new record in a Maximo Object Structure (e.g., create a Work Order, Asset, or Service Request). Use get_schema_details first to know required fields. IMPORTANT: Your Maximo user profile must have a Default Insert Site set.",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        objectStructure: {
+                            type: "string",
+                            description: "The Object Structure to create a record in (e.g., MXWO, MXASSET, MXSR)"
+                        },
+                        recordData: {
+                            type: "object",
+                            description: "JSON object containing the fields and values for the new record. Use get_schema_details to discover available fields. Example for MXWO: {\"description\": \"Pump inspection\", \"siteid\": \"BEDFORD\", \"worktype\": \"CM\"}"
+                        }
+                    },
+                    required: ["objectStructure", "recordData"]
+                }
+            },
+            {
+                name: "update_record",
+                description: "Update fields on an existing Maximo record using its unique ID. Use query_maximo first to find the record ID. Only the fields you provide will be changed (partial update).",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        objectStructure: {
+                            type: "string",
+                            description: "The Object Structure of the record to update (e.g., MXWO, MXASSET)"
+                        },
+                        recordId: {
+                            type: "string",
+                            description: "The unique identifier of the record (e.g., the work order number like '1001', or the asset number)"
+                        },
+                        recordData: {
+                            type: "object",
+                            description: "JSON object with fields to update. Only fields listed here will be modified. Example: {\"description\": \"Updated description\", \"priority\": 1}"
+                        }
+                    },
+                    required: ["objectStructure", "recordId", "recordData"]
+                }
+            },
+            {
+                name: "run_action",
+                description: "Execute a Maximo business action on a record (e.g., change status, approve, reject). Actions trigger Maximo workflow rules. Common actions: changeStatus, initiate, approve, reject.",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        objectStructure: {
+                            type: "string",
+                            description: "The Object Structure of the record (e.g., MXWO, MXASSET)"
+                        },
+                        recordId: {
+                            type: "string",
+                            description: "The unique identifier of the record to act on"
+                        },
+                        action: {
+                            type: "string",
+                            description: "The Maximo action name to execute (e.g., 'changeStatus', 'wsmethod:approve'). Check the Maximo documentation for available actions per Object Structure."
+                        },
+                        actionData: {
+                            type: "object",
+                            description: "Optional JSON payload for the action (e.g., for changeStatus: {\"status\": \"APPR\", \"memo\": \"Approved via AI\"})"
+                        }
+                    },
+                    required: ["objectStructure", "recordId", "action"]
+                }
             }
         ]
     };
@@ -568,6 +1137,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 return await renderCarbonDetails(args);
             case "get_instance_details":
                 return await getInstanceDetails();
+            case "create_record":
+                return await createRecord(args);
+            case "update_record":
+                return await updateRecord(args);
+            case "run_action":
+                return await runAction(args);
             default:
                 throw new Error(`Unknown tool: ${name}`);
         }

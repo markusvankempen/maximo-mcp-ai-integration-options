@@ -17,6 +17,7 @@ MCP is an open standard that allows AI models to communicate with external syste
 *   **Automated Schema Knowledge**: The AI no longer relies on generic training data. It **introspects** your specific Maximo configuration to understand available Object Structures and their fields.
 *   **Live Data Validation**: Queries can be executed immediately to verify correctness, eliminating the "code-deploy-debug" cycle.
 *   **Multi-Format Code Generation**: Generate OSLC API calls, Python scripts, or SQL queries from the same natural language request.
+*   **Full CRUD Lifecycle**: Native support for creating, updating, and triggering business actions directly from the chat interface.
 
 ### 1.3 Why Use an MCP Server vs. Direct Approach?
 
@@ -63,9 +64,9 @@ The `maximo-mcp-server.js` requires the following packages (defined in `package.
 *   `@modelcontextprotocol/sdk` — The MCP SDK for Node.js
 *   `zod` — Schema validation library
 
----
-
 ## 3. Configuring the MCP Server in Your IDE
+
+> 💡 **Automated Setup Option**: You can install the **IBM Maximo MCP for AI** VS Code extension (`vscode-extension`), which automatically registers the MCP server for GitHub Copilot natively and provides one-click setup commands for Cursor, Antigravity, and Claude Desktop, plus an interactive CRUD panel and Live Seed & Scaffold!
 
 ### 2.3 The OpenAPI Schema File (`maximo_openapi.json`)
 
@@ -299,9 +300,11 @@ Maximo MCP Server running on stdio
 
 ## 4. Available MCP Tools
 
-The Maximo MCP Server exposes the following tools to the AI agent.
+The Maximo MCP Server exposes **9 tools** to the AI agent — 6 read tools and 3 write/CRUD tools.
 
 ![MCP Tools UI](../images/mcp_tools_ui.png)
+
+### Read Tools (Schema & Query)
 
 | Tool Name | Description | Example Use Case |
 | :--- | :--- | :--- |
@@ -311,6 +314,17 @@ The Maximo MCP Server exposes the following tools to the AI agent.
 | `render_carbon_table` | Generates a beautiful Carbon Design System HTML table from Maximo data. | "Show me a table of open work orders." |
 | `render_carbon_details` | Generates a beautiful Carbon Design System detail view for a specific Maximo record. | "Show me the details for work order 1001." |
 | `get_instance_details` | Introspect the Maximo instance to get context data (e.g., latest data dates, version). | "Is the Maximo server reachable?" |
+
+### Write Tools (CRUD Operations)
+
+> [!IMPORTANT]
+> Write tools modify data in your live Maximo instance. Use with caution in production environments. Always use a read-only API key for development and exploration.
+
+| Tool Name | Description | Example Use Case |
+| :--- | :--- | :--- |
+| `create_record` | Create a new record in any Maximo Object Structure (Work Order, Asset, SR, etc.). | "Create a new corrective maintenance work order for the BEDFORD site." |
+| `update_record` | Partially update fields on an existing Maximo record by ID. Only provided fields are changed. | "Update work order 1001 to priority 1." |
+| `run_action` | Execute a Maximo business action (e.g., status change, approval) that triggers workflow rules. | "Change work order 1234 status to APPR." |
 
 ---
 
@@ -390,6 +404,116 @@ One of the most powerful features of the MCP integration is the ability to gener
       AND targcompdate < CURRENT_DATE;
     ```
 
+### D. CRUD Operations (Write-Back to Maximo)
+
+The write tools enable natural-language-driven write-back workflows against any Maximo Object Structure.
+
+*   **Example Prompt**: "Create a new corrective maintenance work order for BEDFORD site, priority 1."
+*   **AI Workflow**:
+    1. Calls `get_schema_details(MXWO)` to confirm field names.
+    2. Calls `create_record` with the payload.
+
+*   **Example Prompt**: "Approve work order 1025 with memo 'Reviewed by AI'."
+*   **AI Workflow**:
+    1. Calls `run_action` with `action=changeStatus` and `{status: "APPR", memo: "Reviewed by AI"}`.
+
+---
+
+## 6.5 CRUD Workflows: Write-Back to Maximo
+
+### Creating a Record
+
+```http
+POST /maximo/api/os/MXWO?lean=1
+apikey: [YOUR_KEY]
+Content-Type: application/json
+Properties: *
+
+{
+  "description": "Emergency pump inspection",
+  "siteid": "BEDFORD",
+  "worktype": "CM",
+  "wopriority": 1
+}
+```
+
+**Response** (201 Created):
+```json
+{
+  "status": "success",
+  "httpStatus": 201,
+  "objectStructure": "MXWO",
+  "record": {
+    "wonum": "1025",
+    "description": "Emergency pump inspection",
+    "status": "WAPPR",
+    "siteid": "BEDFORD"
+  }
+}
+```
+
+> [!IMPORTANT]
+> **Default Insert Site Required**: Your Maximo user profile must have a **Default Insert Site** configured. Set this via: Maximo UI → avatar → **Profile** → **Default Insert Site**.
+
+### Updating a Record
+
+Send only the fields you want to change. All other fields are preserved (partial update).
+
+```http
+POST /maximo/api/os/MXWO/1025?lean=1
+apikey: [YOUR_KEY]
+Content-Type: application/json
+x-method-override: PATCH
+
+{
+  "wopriority": 1,
+  "owner": "MJONES"
+}
+```
+
+### Running a Business Action (Status Change)
+
+Actions trigger Maximo business rules and workflow transitions.
+
+```http
+POST /maximo/api/os/MXWO/1025?action=changeStatus&lean=1
+apikey: [YOUR_KEY]
+Content-Type: application/json
+
+{
+  "status": "APPR",
+  "memo": "Approved via AI assistant"
+}
+```
+
+**Common Actions by Object Structure**:
+
+| Object Structure | Action | Description |
+| :--- | :--- | :--- |
+| `MXWO` | `changeStatus` | Change WO status (WAPPR → APPR → INPRG → COMP) |
+| `MXSR` | `changeStatus` | Change SR status (NEW → QUEUED → RESOLVED) |
+| `MXPO` | `changeStatus` | Change PO status (WAPPR → APPR) |
+| `MXASSET` | `changeStatus` | Change Asset status |
+| `MXWO` | `wsmethod:movetohistory` | Move completed WO to history |
+
+**Valid Work Order Status Transitions**:
+```
+WAPPR → APPR → INPRG → COMP → CLOSE
+             ↘ CAN
+```
+
+> [!WARNING]
+> Skipping status values (e.g., WAPPR → COMP directly) will result in a `400 Bad Request`. Always follow the valid workflow sequence.
+
+### CRUD Security Best Practices
+
+| Practice | Recommendation |
+| :--- | :--- |
+| 🔐 **Separate API Keys** | Use a read-only key for exploration; only write-enabled keys for known write workflows |
+| 🧪 **Test Non-Production First** | Validate all CRUD operations on a dev/test Maximo instance before production |
+| 📋 **Query Before Modifying** | Use `query_maximo` to confirm the record's current state before updating |
+| ⚠️ **Work Type Values** | Only valid types are accepted: `CM`, `PM`, `CP`, `EM`. Invalid types return a 400 error |
+
 ---
 
 ## 7. Execution, Simulation, & Refinement
@@ -467,5 +591,6 @@ Let's walk through a typical use case from start to finish.
 | **Validation** | Guess & Check | **Introspect & Verify** |
 | **Output** | Code Snippets | **Executed Queries & Visual UIs** |
 | **Refinement** | Manual debugging | **Conversational Auto-correction** |
+| **Write Operations** | Not supported | **Create, Update & Run Actions via AI** |
 
 This workflow transforms the IDE from a text editor into a **Maximo command center**, reducing development time and errors significantly.
