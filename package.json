@@ -1,6 +1,6 @@
 {
   "name": "maximo-mcp-server",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "mcpName": "io.github.markusvankempen/maximo-mcp-server",
   "description": "Model Context Protocol (MCP) server for IBM Maximo — schema discovery, OSLC queries, Carbon UI generation, and full CRUD write-back (create, update, actions)",
   "main": "maximo-mcp-server.js",

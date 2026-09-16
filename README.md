@@ -8,13 +8,13 @@
 [![MCP](https://img.shields.io/badge/MCP-Protocol-5A29E4?style=for-the-badge)](https://modelcontextprotocol.io/)
 [![Maximo](https://img.shields.io/badge/IBM-Maximo-052FAD?style=for-the-badge&logo=ibm&logoColor=white)](https://www.ibm.com/products/maximo)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-v1.2.0-blue?style=for-the-badge)](package.json)
+[![Version](https://img.shields.io/badge/Version-v1.2.1-blue?style=for-the-badge)](package.json)
 
 *Transform your Maximo development workflow with AI-driven schema discovery, live data querying, intelligent code generation, and full write-back capabilities.*
 
 **Author:** Markus van Kempen  
 **Email:** mvankempen@ca.ibm.com | markus.van.kempen@gmail.com  
-**Date:** 5 February 2026
+**Date:** 16 September 2026
 
 [Getting Started](#-quick-start) • [Documentation](#-documentation) • [Live Demo](#-live-demo) • [Use Cases](#-use-cases)
 
